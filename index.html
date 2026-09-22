@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#060B17">
+<title>מחירון מערכות — Optimate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060B17; --bg2:#0A1120; --card:#0D1526; --card2:#101B31;
+  --border:#1C2A44; --border2:#2A3D63;
+  --text:#E8EEF9; --muted:#8B9BB8; --faint:#5B6B8A;
+  --accent:#4E8CFF; --green:#34D399; --amber:#FBBF24; --rose:#FB7185;
+  --nav:rgba(6,11,23,.9); --shadow:0 18px 50px rgba(0,0,0,.22);
+}
+html[data-theme="light"]{
+  --bg:#F5F7FB; --bg2:#EEF2F8; --card:#FFFFFF; --card2:#F8FAFD;
+  --border:#D8E0EC; --border2:#B7C5DA;
+  --text:#172033; --muted:#5E6B80; --faint:#8290A5;
+  --accent:#2F6FE4; --green:#169B72; --amber:#B77900; --rose:#D84B64;
+  --nav:rgba(245,247,251,.92); --shadow:0 18px 50px rgba(30,55,90,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{background:var(--bg);color:var(--text);font-family:'Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+[hidden]{display:none!important}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* APP BAR */
+.appbar{position:sticky;top:0;z-index:100;background:var(--nav);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.appbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:10px;padding-bottom:10px}
+.appbrand{font-size:15px;font-weight:900;color:var(--text);white-space:nowrap}
+.appactions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.viewlink,.theme-toggle{font-family:inherit;font-size:13px;font-weight:700;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:999px;padding:7px 14px;text-decoration:none;cursor:pointer;transition:.15s}
+.viewlink:hover,.theme-toggle:hover,.viewlink.active{color:var(--text);border-color:var(--accent)}
+.viewlink.active{background:rgba(78,140,255,.12)}
+.theme-toggle{min-width:44px;padding-inline:12px}
+.theme-toggle:focus-visible,.viewlink:focus-visible{outline:3px solid rgba(78,140,255,.35);outline-offset:2px}
+
+/* HOME SELECTOR */
+.home-picker{padding:34px 0 58px}
+.home-picker-head{margin-bottom:18px}
+.home-picker-head h2{font-size:25px;font-weight:900;margin-bottom:4px}
+.home-picker-head p{color:var(--muted);font-size:14px}
+.home-workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}
+.home-system-list{display:grid;gap:10px;grid-column:1}
+.home-system-row{background:var(--card);border:1px solid var(--border);border-radius:15px;overflow:hidden;transition:border-color .15s,box-shadow .15s}
+.home-system-row.selected{border-color:var(--accent);box-shadow:0 0 0 2px rgba(78,140,255,.1)}
+.home-system-choice{display:flex;align-items:center;gap:13px;padding:15px 17px;cursor:pointer}
+.home-system-choice input{width:20px;height:20px;accent-color:var(--accent);flex:0 0 auto}
+.home-system-choice input:focus-visible{outline:3px solid rgba(78,140,255,.35);outline-offset:3px}
+.home-system-choice>span{min-width:0}
+.home-system-name{font-size:16px;font-weight:800;color:var(--text)}
+.home-system-cat{display:block;font-size:12.5px;font-weight:400;color:var(--muted);overflow-wrap:anywhere}
+.home-system-calculator{padding:0 16px 16px;border-top:1px solid var(--border)}
+.home-system-calculator .calc{margin:14px 0 0}
+.home-empty-note{font-size:13px;color:var(--muted);padding:13px 0 0}
+.home-summary{grid-column:2;grid-row:1;position:sticky;top:76px;max-height:calc(100vh - 96px);overflow:auto;margin-top:0;background:var(--card);border:1px solid var(--border2);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
+.home-summary h2{font-size:23px;font-weight:900;margin-bottom:4px}
+.home-summary-sub{font-size:13px;color:var(--muted);margin-bottom:15px}
+.currency-totals{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.home-workspace .currency-totals{grid-template-columns:1fr}
+.currency-total{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:14px;text-align:center}
+.currency-total span{display:block;font-size:12px;color:var(--muted);margin-bottom:2px}
+.currency-total strong{font-size:25px;font-weight:900;color:var(--text)}
+.summary-lines{display:grid;gap:7px}
+.summary-line{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:9px 11px;border-top:1px solid var(--border);font-size:13px}
+.summary-line-info{color:var(--muted)}
+.summary-line-info b{color:var(--text)}
+.summary-line-price{font-weight:800;white-space:nowrap}
+.quote-summary{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border2)}
+.quote-summary h3{font-size:14px;color:var(--amber);margin-bottom:5px}
+.quote-summary p{font-size:13px;color:var(--muted)}
+
+/* HERO */
+.hero{padding:60px 0 34px;border-bottom:1px solid var(--border);
+  background:radial-gradient(1000px 420px at 85% -10%,rgba(78,140,255,.14),transparent 60%),
+  radial-gradient(800px 380px at 10% -5%,rgba(52,211,153,.08),transparent 60%),var(--bg);}
+.hero .kicker{display:inline-block;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--accent);background:rgba(78,140,255,.1);border:1px solid rgba(78,140,255,.3);border-radius:999px;padding:4px 14px;margin-bottom:18px}
+.hero h1{font-size:clamp(30px,5vw,44px);font-weight:900;line-height:1.15;margin-bottom:12px}
+.hero h1 .grad{background:linear-gradient(90deg,#4E8CFF,#34D399);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p.sub{font-size:16.5px;color:var(--muted);max-width:760px;margin-bottom:20px}
+.meta-chips{display:flex;flex-wrap:wrap;gap:8px}
+.meta-chips .chip{font-size:12.5px;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 12px}
+.meta-chips .chip b{color:var(--text);font-weight:600}
+
+/* NAV */
+nav.sysnav{position:sticky;top:57px;z-index:50;background:var(--nav);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+nav.sysnav .wrap{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;padding-top:11px;padding-bottom:11px}
+nav.sysnav a{flex:0 0 auto;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;padding:6px 13px;border-radius:999px;border:1px solid var(--border);background:var(--card);white-space:nowrap;display:flex;align-items:center;gap:7px;transition:.15s}
+nav.sysnav a:hover{color:var(--text);border-color:var(--border2);background:var(--card)}
+nav.sysnav a .dot{width:8px;height:8px;border-radius:50%}
+
+/* SUMMARY */
+section.summary{padding:38px 0 8px}
+h2.sec{font-size:24px;font-weight:800;margin-bottom:6px}
+p.secsub{color:var(--muted);font-size:14.5px;margin-bottom:18px}
+.tblwrap{overflow-x:auto;border:1px solid var(--border);border-radius:14px;background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:760px}
+thead th{text-align:right;font-size:12.5px;font-weight:600;color:var(--faint);padding:11px 16px;border-bottom:1px solid var(--border);background:var(--bg2);white-space:nowrap}
+tbody td{padding:10px 16px;border-bottom:1px solid rgba(28,42,68,.6);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:not(.catrow):hover{background:rgba(78,140,255,.04)}
+tr.catrow td{background:var(--bg2);font-weight:800;font-size:13px;padding:8px 16px;border-bottom:1px solid var(--border)}
+tr.catrow td a{color:inherit;text-decoration:none}
+td .sysname{font-weight:700;white-space:nowrap}
+td.price{font-weight:700;white-space:nowrap}
+td .small,span.small{color:var(--muted);font-size:12px}
+.qb{display:inline-block;font-size:11px;font-weight:700;color:var(--rose);background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.3);border-radius:999px;padding:1px 9px;white-space:nowrap}
+
+/* CATEGORY */
+section.cat{padding:50px 0 0}
+.cathead{display:flex;align-items:baseline;gap:14px;margin-bottom:4px;border-bottom:2px solid var(--border);padding-bottom:14px}
+.cathead .catnum{font-size:15px;font-weight:900;color:var(--faint);letter-spacing:.05em}
+.cathead h2{font-size:27px;font-weight:900}
+.cathead .catcount{font-size:13px;color:var(--faint);font-weight:500}
+p.catsub{color:var(--muted);font-size:14px;margin:12px 0 8px;max-width:840px}
+
+/* SYSTEM BLOCK */
+.sysblock{padding:30px 0 6px}
+.syshead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+.syshead .title{display:flex;align-items:center;gap:12px}
+.syshead .logo{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#fff;flex:0 0 auto}
+.syshead h3{font-size:23px;font-weight:800;line-height:1.2}
+.syshead .cat{font-size:12.5px;color:var(--muted);font-weight:400}
+.syshead a.plink{font-size:12.5px;font-weight:600;color:var(--accent);text-decoration:none;border:1px solid rgba(78,140,255,.35);border-radius:8px;padding:5px 13px;white-space:nowrap;transition:.15s;margin-top:4px}
+.syshead a.plink:hover{background:rgba(78,140,255,.12)}
+p.sysdesc{color:var(--muted);font-size:14px;max-width:840px;margin-bottom:16px}
+p.sysdesc b{color:var(--text);font-weight:600}
+
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:11px;margin-bottom:14px}
+.plan{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px 16px 14px;position:relative;transition:.15s}
+.plan:hover{border-color:var(--border2);transform:translateY(-2px)}
+.plan.pop{border-color:rgba(78,140,255,.55);background:linear-gradient(180deg,rgba(78,140,255,.07),var(--card) 55%)}
+.plan .poptag{position:absolute;top:-10px;inset-inline-start:14px;font-size:10.5px;font-weight:700;background:var(--accent);color:#fff;border-radius:999px;padding:2px 10px}
+.plan .pname{font-size:13.5px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.plan-name-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
+.plan-name-row .pname{margin-bottom:0}
+.plan-info-trigger{width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;border:1px solid var(--border2);border-radius:50%;background:var(--bg2);color:var(--accent);font:800 13px/1 inherit;cursor:pointer}
+.plan-info-trigger:hover{border-color:var(--accent);background:rgba(78,140,255,.12)}
+.plan-info-trigger:focus-visible{outline:3px solid rgba(78,140,255,.35);outline-offset:2px}
+.plan-info-panel{position:absolute;z-index:80;inset-inline-start:12px;inset-inline-end:12px;top:46px;max-height:min(70vh,520px);overflow:auto;padding:15px;border:1px solid var(--border2);border-radius:13px;background:var(--card);box-shadow:var(--shadow);color:var(--text);text-align:start}
+.plan-info-panel h4{font-size:14px;margin-bottom:8px}
+.plan-info-intro{font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:6px}
+.plan .plan-info-panel ul{display:block!important;margin:0 0 10px;padding-inline-start:18px;list-style:disc;font-size:12.5px;color:var(--muted)}
+.plan-info-panel li{border:0!important;padding:2px 0!important}
+.plan-info-caveat{font-size:11.5px;color:var(--amber);margin:8px 0}
+.plan-info-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:9px;border-top:1px solid var(--border);font-size:11px;color:var(--faint)}
+.plan-info-meta a{color:var(--accent);font-weight:700;text-decoration:none}
+.plan-info-meta a:hover{text-decoration:underline}
+.plan .pprice{font-size:23px;font-weight:900;line-height:1.1}
+.plan .pprice small{font-size:12px;font-weight:500;color:var(--muted)}
+.plan .psub{font-size:11.5px;color:var(--faint);margin-bottom:10px;min-height:17px}
+.plan ul{list-style:none;font-size:12.5px;color:var(--muted)}
+.plan ul li{padding:3px 0;border-top:1px solid rgba(28,42,68,.5)}
+.plan ul li b{color:var(--text);font-weight:600}
+
+.factors{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:14px 18px;margin-bottom:10px}
+.factors h4{font-size:13.5px;font-weight:700;color:var(--amber);margin-bottom:8px}
+.factors ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:5px 24px}
+.factors ul li{font-size:13px;color:var(--muted);padding-inline-start:15px;position:relative}
+.factors ul li::before{content:'◂';position:absolute;inset-inline-start:0;color:var(--amber);font-size:10px;top:3px}
+.factors ul li b{color:var(--text);font-weight:600}
+.note{font-size:12px;color:var(--faint);border-inline-start:3px solid var(--border2);padding:3px 13px;margin-bottom:8px}
+.note b{color:var(--muted);font-weight:600}
+.apibox{background:rgba(52,211,153,.05);border:1px solid rgba(52,211,153,.25);border-radius:13px;padding:13px 18px;margin-bottom:10px}
+.apibox h4{font-size:13.5px;font-weight:700;color:var(--green);margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.apibox h4 .apitag{font-size:10px;font-weight:700;background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.3);border-radius:999px;padding:1px 8px}
+.apibox p{font-size:13px;color:var(--muted);line-height:1.7}
+.apibox p b{color:var(--text);font-weight:600}
+.apibox .free{color:var(--green);font-weight:700}
+.apibox .paid{color:var(--amber);font-weight:700}
+.apibox .none{color:var(--rose);font-weight:700}
+.calc{background:linear-gradient(180deg,rgba(78,140,255,.07),var(--card2));border:1px solid var(--border2);border-radius:14px;padding:15px 18px;margin-bottom:10px}
+.calc h4{font-size:13.5px;font-weight:800;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.calc h4 .tag{font-size:10px;font-weight:700;background:rgba(78,140,255,.16);color:var(--accent);border:1px solid rgba(78,140,255,.35);border-radius:999px;padding:1px 8px}
+.calc .billtog{display:inline-flex;border:1px solid var(--border2);border-radius:999px;overflow:hidden;margin-bottom:12px;margin-inline-start:8px}
+.calc .billtog button{font-family:inherit;font-size:12.5px;font-weight:700;color:var(--muted);background:transparent;border:0;padding:6px 15px;cursor:pointer;transition:.15s}
+.calc .billtog button.on{background:var(--green);color:#04140d}
+.calc .planchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.calc .planchips button{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:999px;padding:5px 13px;cursor:pointer;transition:.15s}
+.calc .planchips button.on{color:#fff;background:var(--accent);border-color:var(--accent)}
+.calc .mail-selector{margin-top:14px}.calc .mail-label{font-size:13px;font-weight:700;color:var(--text);margin-bottom:7px}
+.calc .mailchips{display:flex;flex-wrap:wrap;gap:8px}.calc .mailchips button{font-family:inherit;font-size:12.5px;font-weight:700;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:999px;padding:6px 14px;cursor:pointer}.calc .mailchips button.on{color:#fff;background:var(--accent);border-color:var(--accent)}
+.calc .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.calc .ctrl label{font-size:13px;color:var(--text);font-weight:600;min-width:130px}
+.calc input[type=range]{direction:rtl;flex:1;min-width:150px;accent-color:var(--accent);height:6px}
+.calc input[type=number]{width:88px;background:var(--bg2);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:6px 8px;font-family:inherit;font-size:14px;font-weight:700;text-align:center}
+.calc select.selbk{min-width:150px;background:var(--bg2);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:7px 12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.calc select.selbk option{background:var(--bg2);color:var(--text)}
+.calc .qtyval{font-size:14px;font-weight:800;color:var(--text);min-width:110px}
+.calc .result{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:13px 16px;margin-top:11px}
+.calc .result .big{font-size:27px;font-weight:900;color:var(--text);white-space:normal;overflow-wrap:anywhere;min-width:0;max-width:100%}
+.calc .result .big small{font-size:12.5px;font-weight:500;color:var(--muted)}
+.calc .result .inc{font-size:12.5px;color:var(--muted);line-height:1.6;flex:1;min-width:200px}
+.calc .result .inc b{color:var(--text);font-weight:700}
+.calc .hint{font-size:11.5px;color:var(--faint);margin-top:9px;line-height:1.5}
+.calcxtra{font-size:12px;color:var(--muted);line-height:1.65;margin-top:10px;padding-top:9px;border-top:1px dashed var(--border2)}
+.calcxtra b{color:var(--accent);font-weight:700}
+.xstat{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:13px 18px;margin-bottom:10px}
+.xstat h4{font-size:13.5px;font-weight:700;color:var(--accent);margin-bottom:7px}
+.xstat ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:4px 22px}
+.xstat li{font-size:12.5px;color:var(--muted);padding-inline-start:15px;position:relative;line-height:1.55}
+.xstat li::before{content:'◆';position:absolute;inset-inline-start:0;color:var(--accent);font-size:9px;top:3px}
+/* Keep each pricing system compact while preserving the supporting data in the page. */
+.plan ul,.calc .result .inc{display:none!important}
+.calcxtra,.hint,.xstat{display:none!important}
+.divider{height:1px;background:var(--border);margin-top:26px;opacity:.55}
+
+footer{margin-top:56px;border-top:1px solid var(--border);padding:30px 0 46px;background:var(--bg2)}
+footer p{font-size:12.5px;color:var(--faint);max-width:860px}
+footer p b{color:var(--muted)}
+@media (max-width:900px){.home-workspace{grid-template-columns:1fr}.home-system-list,.home-summary{grid-column:auto;grid-row:auto}.home-summary{position:static;max-height:none;overflow:visible;margin-top:20px}.home-workspace .currency-totals{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:600px){.plan:hover{transform:none}.plan-info-panel{position:fixed;inset-inline:16px;top:auto;bottom:auto;transform:none;max-height:calc(100vh - 32px);overflow:auto;z-index:250}}
+@media (max-width:640px){.appbar .wrap{align-items:stretch;flex-direction:column;gap:7px}.appbrand{text-align:center;white-space:normal}.appactions{justify-content:center;flex-wrap:nowrap}.viewlink{padding-inline:10px}.theme-toggle{min-width:40px}.hero{padding:34px 0 24px}.hero h1{font-size:29px}.home-picker{padding-top:24px}.home-system-choice{padding:13px}.home-summary{padding:15px}.currency-totals{grid-template-columns:1fr}.summary-line{align-items:flex-start;flex-direction:column;gap:2px}.calc{padding:13px}.calc .result{align-items:flex-start}.calc .result .big{font-size:23px;width:100%}.calc .result .inc{min-width:0;width:100%}section.cat{padding:40px 0 0}nav.sysnav{position:static}nav.sysnav a{font-size:12px;padding:5px 10px}}
+</style>
+</head>
+<body>
+
+<header class="appbar">
+  <div class="wrap">
+    <div class="appbrand">Optimate · מחירון מערכות</div>
+    <div class="appactions">
+      <a class="viewlink active" id="home-link" href="#home">עמוד ראשי</a>
+      <a class="viewlink" id="pricing-link" href="#pricing">מחירון מלא</a>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="מעבר בין מצב בהיר לכהה" title="מצב בהיר/כהה">☀️</button>
+    </div>
+  </div>
+</header>
+
+<main id="home-view">
+  <section class="hero">
+    <div class="wrap">
+      <span class="kicker">OPTIMATE · מחשבון מערכות</span>
+      <h1>בחירת מערכות <span class="grad">וסיכום עלויות</span></h1>
+      <p class="sub">בחרו מערכות מהרשימה, הגדירו חבילה וכמות, וקבלו סיכום חודשי לפי מטבע.</p>
+    </div>
+  </section>
+  <section class="home-picker">
+    <div class="wrap">
+      <div class="home-picker-head">
+        <h2>בחרו מערכות</h2>
+        <p>סמנו מערכת כדי לפתוח מתחתיה את החבילות והכמויות.</p>
+      </div>
+      <div class="home-workspace">
+        <div class="home-system-list" id="home-system-list" aria-live="polite"></div>
+        <section class="home-summary" id="home-summary" aria-live="polite">
+          <h2>סה״כ חודשי</h2>
+          <p class="home-summary-sub">הסכומים מוצגים בנפרד לפי מטבע. מחירים בשקלים אינם כוללים מע״מ.</p>
+          <div class="currency-totals">
+            <div class="currency-total"><span>שקלים</span><strong id="total-ils">₪0</strong></div>
+            <div class="currency-total"><span>דולרים</span><strong id="total-usd">$0</strong></div>
+            <div class="currency-total"><span>אירו</span><strong id="total-eur">0€</strong></div>
+          </div>
+          <div class="summary-lines" id="summary-lines"><p class="home-empty-note">עדיין לא נבחרו מערכות.</p></div>
+          <div class="quote-summary" id="quote-summary" hidden><h3>דורש הצעת מחיר</h3><p id="quote-lines"></p></div>
+        </section>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="pricing-view" hidden>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="kicker">OPTIMATE · מסמך פנימי לתמחור פרויקטים</span>
+    <h1>מחירון מערכות <span class="grad">לפי קטגוריות</span></h1>
+    <p class="sub">ריכוז חבילות, מחירים, <b>עלויות שימוש ב-API</b> וכל מה שמשפיע על העלות — 21 מערכות ב־10 קטגוריות, לפי המחירונים הרשמיים של הספקים. לשימוש הצוות בבניית הצעות מחיר ללקוחות.</p>
+    <div class="meta-chips">
+      <span class="chip">עודכן: <b>ספטמבר 2026</b></span>
+      <span class="chip">מטבע: <b>לפי פרסום הספק</b> ($ / € / ₪)</span>
+      <span class="chip">מחירים בש״ח — <b>לפני מע״מ</b></span>
+      <span class="chip"><b>21 מערכות</b> · <b>10 קטגוריות</b></span>
+      <span class="chip">מידע API רק כאשר הוא מופיע במחירון הרשמי</span>
+      <span class="chip">🖱️ <b>מחשבון אינטראקטיבי</b> — בחרו תוכנית וכמות</span>
+    </div>
+  </div>
+</header>
+
+<nav class="sysnav">
+  <div class="wrap">
+    <a href="#cat-auto"><span class="dot" style="background:#B02EDE"></span>אוטומציה</a>
+    <a href="#cat-pm"><span class="dot" style="background:#4E8CFF"></span>ניהול פרויקטים</a>
+    <a href="#cat-crm"><span class="dot" style="background:#FF6B35"></span>CRM</a>
+    <a href="#cat-service"><span class="dot" style="background:#22D3EE"></span>שירות לקוחות</a>
+    <a href="#cat-msg"><span class="dot" style="background:#25D366"></span>WhatsApp והודעות</a>
+    <a href="#cat-email"><span class="dot" style="background:#FBBF24"></span>דיוור</a>
+    <a href="#cat-pay"><span class="dot" style="background:#FB7185"></span>סליקה ותשלומים</a>
+    <a href="#cat-docs"><span class="dot" style="background:#14B8A6"></span>מסמכים וטפסים</a>
+    <a href="#cat-erp"><span class="dot" style="background:#818CF8"></span>ERP</a>
+    <a href="#cat-tel"><span class="dot" style="background:#38BDF8"></span>טלפוניה</a>
+  </div>
+</nav>
+
+<!-- ======== CAT 1: AUTOMATION ======== -->
+<section class="cat" id="cat-auto">
+  <div class="wrap">
+    <div class="cathead"><span class="catnum" style="color:#B02EDE">01</span><h2>אוטומציה ואינטגרציות</h2><span class="catcount">2 מערכות</span></div>
+    <p class="catsub">שתי הפלטפורמות מתומחרות לפי נפח שימוש ולא לפי משתמשים — אבל יחידת המדידה שונה מהותית: Make סופרת כל מודול, n8n סופרת הרצה מלאה. בתהליכים ארוכים ההבדל דרמטי.</p>
+
+    <div class="sysblock" id="make">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#B02EDE,#6D00CC)">M</div>
+        <div><h3>Make</h3><div class="cat">אוטומציה ויזואלית · USD · לפי קרדיטים לארגון</div></div></div>
+        <a class="plink" href="https://www.make.com/en/pricing" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">כל הפעלת מודול בתרחיש = <b>קרדיט אחד</b>. המחירים לרף הבסיס של <b>10,000 קרדיטים/חודש</b>; העלות עולה עם הסליידר. הסכומים להלן הם עלות חודשית <b>בחיוב שנתי</b>.</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Free</div><div class="pprice">$0</div><div class="psub">1,000 קרדיטים/חודש</div><ul><li><b>2</b> תרחישים פעילים</li><li>אינטרוול 15 דקות</li></ul></div>
+        <div class="plan"><div class="pname">Core</div><div class="pprice">$9 <small>/חודש · בחיוב שנתי</small></div><div class="psub">עד 300K קרדיטים</div><ul><li>תרחישים <b>ללא הגבלה</b></li><li>אינטרוול דקה · Make API</li></ul></div>
+        <div class="plan pop"><span class="poptag">הנפוץ ביותר</span><div class="pname">Pro</div><div class="pprice">$16 <small>/חודש · בחיוב שנתי</small></div><div class="psub">עד 8M קרדיטים</div><ul><li>משתני Custom · חיפוש בלוגים</li><li>עדיפות בהרצה</li></ul></div>
+        <div class="plan"><div class="pname">Teams</div><div class="pprice">$29 <small>/חודש · בחיוב שנתי</small></div><div class="psub">צוותים והרשאות</div><ul><li>צוותים מרובים</li><li>שיתוף תבניות</li></ul></div>
+        <div class="plan"><div class="pname">Enterprise</div><div class="pprice">מותאם</div><div class="psub">חוזה שנתי</div><ul><li>SSO · הגנת חריגה</li><li>תמיכה 24/7</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>נפח הקרדיטים</b> — מדרגות: 10K → 20K → 40K → 80K → 150K → 300K → ... → 8M לחודש</li>
+        <li><b>קרדיטים נוספים</b> — בתוספת 25% על מחיר הקרדיט בחבילה</li>
+        <li><b>תעבורת נתונים</b> — 5GB לכל 10K קרדיטים</li>
+        <li><b>משתמשים לא משפיעים</b> — תמחור לארגון · שנתי חוסך 15%+</li>
+      </ul></div>
+      <div class="apibox"><h4><span class="apitag">API</span> עלות ושימוש ב-API</h4>
+      <p>גישה ל־<b>Make API</b> מופיעה במחירון החל מחבילת Core וכלולה גם בחבילות שמעליה. המחירון אינו מציג עלות API נפרדת.</p></div>
+
+    </div>
+    <div class="divider"></div>
+
+    <div class="sysblock" id="n8n">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#EA4B71,#FF7E5F)">n8n</div>
+        <div><h3>n8n</h3><div class="cat">אוטומציה קוד־פתוח · Self-hosted · שרת Optimate או תשתית הלקוח</div></div></div>
+        <a class="plink" href="https://n8n.io/pricing/" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc"><b>המודל שלנו:</b> התקנת n8n על <b>שרת Optimate עולה ₪500 לחודש לפני מע״מ</b>. בהתקנה על תשתית של הלקוח, התמחור הוא לפי החבילה הנבחרת במחירון הרשמי של n8n. מחירי החבילות הרשמיות מוצגים להלן.</p>
+      <div class="plans">
+        <div class="plan pop"><span class="poptag">מה שאנחנו מטמיעים</span><div class="pname">אירוח Optimate</div><div class="pprice">₪500 <small>/חודש</small></div><div class="psub">לפני מע״מ · Self-hosted על שרת שלנו</div><ul><li>שרת n8n ייעודי בניהול Optimate</li><li>הקמה ותחזוקה לפי היקף הפרויקט</li></ul></div>
+        <div class="plan"><div class="pname">Starter <small>ענן</small></div><div class="pprice">€20 <small>/חודש · בחיוב שנתי</small></div><div class="psub">רשמי — להשוואה</div><ul><li><b>2,500</b> הרצות/חודש</li></ul></div>
+        <div class="plan"><div class="pname">Pro <small>ענן</small></div><div class="pprice">€50 <small>/חודש · בחיוב שנתי</small></div><div class="psub">רשמי — להשוואה</div><ul><li><b>10,000</b> הרצות/חודש</li></ul></div>
+        <div class="plan"><div class="pname">Business</div><div class="pprice">€667 <small>/חודש · בחיוב שנתי</small></div><div class="psub">רשמי — Self-hosted</div><ul><li><b>40,000</b> הרצות/חודש</li></ul></div>
+        <div class="plan"><div class="pname">Enterprise</div><div class="pprice">מותאם</div><div class="psub">ענן/Self-hosted מנוהל</div><ul><li>SSO · Git · SLA</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>כמות הרצות Workflow בחודש</b> — המכסה משתנה לפי החבילה</li>
+        <li><b>כמות הרצות מקבילות</b> — 5 ב־Starter,‏ 20 ב־Pro ויותר מ־200 ב־Enterprise</li>
+        <li><b>סוג האירוח</b> — Starter ו־Pro בענן; Business מוצגת כ־Self-hosted</li>
+        <li><b>יכולות ארגוניות</b> — SSO, סביבות ו־Git מופיעים מ־Business</li>
+      </ul></div>
+
+      <div class="note"><b>לתמחור ללקוח:</b> באירוח Optimate עלות השרת היא <b>₪500 לחודש לפני מע״מ</b>. בתשתית הלקוח יש לתמחר לפי החבילה המתאימה במחירון n8n.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== CAT 2: PM ======== -->
+<section class="cat" id="cat-pm">
+  <div class="wrap">
+    <div class="cathead"><span class="catnum" style="color:#4E8CFF">02</span><h2>ניהול פרויקטים ועבודה</h2><span class="catcount">מערכת אחת</span></div>
+    <p class="catsub">monday.com מתומחרת לפי משתמש, במכירה בחבילות מושבים (מינימום 3). המחיר הכולל נקבע לפי מספר המשתמשים, התוכנית, והמוצר (ניהול עבודה / CRM / Dev / Service).</p>
+
+    <div class="sysblock" id="monday">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#FF3D57,#6C6CFF)">m</div>
+        <div><h3>monday.com</h3><div class="cat">ניהול עבודה, CRM, פיתוח ושירות · USD · לפי משתמש</div></div></div>
+        <a class="plink" href="https://monday.com/pricing" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">מושבים נמכרים <b>בחבילות</b> (3, 5, 10, 15, 20...) — משלמים על כל החבילה. מינימום <b>3 משתמשים</b>. שנתי חוסך <b>18%</b>. מחירים: שנתי / (חודשי).</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Free</div><div class="pprice">$0</div><div class="psub">עד 2 משתמשים</div><ul><li>3 בורדים · 3 דוקים</li><li>ללא אוטומציות</li></ul></div>
+        <div class="plan"><div class="pname">Basic</div><div class="pprice">$9 <small>($12) /משתמש</small></div><div class="psub">Work Management</div><ul><li>בורדים ללא הגבלה</li><li>ללא אוטומציות · 1,000 AI</li></ul></div>
+        <div class="plan pop"><span class="poptag">הנפוץ ביותר</span><div class="pname">Standard</div><div class="pprice">$12 <small>($14) /משתמש</small></div><div class="psub">כניסה לאוטומציות</div><ul><li><b>250+250</b> פעולות/חודש</li><li>Gantt · אורחים · 2,000 AI</li></ul></div>
+        <div class="plan"><div class="pname">Pro</div><div class="pprice">$19 <small>($24) /משתמש</small></div><div class="psub">לאוטומציות כבדות</div><ul><li><b>25,000</b> פעולות/חודש</li><li>נוסחאות · מעקב זמן · 3,000 AI</li></ul></div>
+        <div class="plan"><div class="pname">Enterprise</div><div class="pprice">מותאם</div><div class="psub">מינימום 12 חודשים</div><ul><li><b>250,000</b> פעולות/חודש</li><li>אבטחה מתקדמת · 24/7</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מוצרים נוספים (לכל משתמש, שנתי) + גורמי מחיר</h4><ul>
+        <li><b>monday CRM:</b> Basic $12 · Standard $17 · Pro $28 (לפי תקרת אנשי קשר 1K/10K/100K)</li>
+        <li><b>monday dev:</b> $9 / $12 / $20 · <b>monday service:</b> Standard $31 · Pro $45</li>
+        <li><b>חבילות מושבים</b> — מדלגים לחבילה הבאה גם עבור משתמש אחד נוסף</li>
+        <li><b>נפח פעולות</b> — הקפיצה בין תוכניות: 250 → 25K → 250K לחודש</li>
+        <li><b>שנתי חוסך 18%</b> · Viewers חינם, אורחים נספרים אחרת</li>
+      </ul></div>
+
+      <div class="note"><b>לתמחור ללקוח:</b> ה-$9 (Basic) הוא מחיר הכניסה התיאורטי — אך <b>ללא אוטומציות</b>. ברוב פרויקטי האוטומציה נדרש <b>Pro ($19)</b>; 250 הפעולות/חודש ב-Standard נגמרות מהר.</div>
+    </div>
+    </div>
+</section>
+<!-- ======== CAT 3: CRM ======== -->
+<section class="cat" id="cat-crm">
+  <div class="wrap">
+    <div class="cathead"><span class="catnum" style="color:#FF6B35">03</span><h2>CRM וניהול לקוחות</h2><span class="catcount">2 מערכות</span></div>
+    <p class="catsub">כולן לפי משתמש לחודש. שימו לב למינימום המשתמשים ובחיוב השנתי מול החודשי.</p>
+
+    <div class="sysblock" id="fireberry">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#FF6B35,#F7931E)">F</div>
+        <div><h3>Fireberry</h3><div class="cat">CRM ישראלי (לשעבר Powerlink) · ₪ לפני מע״מ · לפי משתמש</div></div></div>
+        <a class="plink" href="https://www.fireberry.com/he/pricing" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">אנחנו מטמיעים את Fireberry <b>החל מתוכנית Professional ומעלה</b> — התוכניות הנמוכות (Free/Standard) לא כוללות אוטומציות ואובייקטים מותאמים. מחירים בחיוב שנתי (חודשי יקר בכ־20%), עם מינימום משתמשים לכל תוכנית.</p>
+      <div class="plans">
+        <div class="plan pop"><span class="poptag">תוכנית הכניסה שלנו</span><div class="pname">Professional</div><div class="pprice">₪150 <small>($57) /משתמש</small></div><div class="psub">מינימום 5 משתמשים</div><ul><li>עד <b>200K</b> לקוחות · <b>50</b> אוטומציות</li><li>אובייקטים מותאמים · חתימה על הצעות</li></ul></div>
+        <div class="plan"><div class="pname">Enterprise</div><div class="pprice">₪250 <small>($94) /משתמש</small></div><div class="psub">מינימום 10 משתמשים</div><ul><li>ללא הגבלת לקוחות · <b>500</b> אוטומציות</li><li>אוטומציות מבוססות זמן</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>מינימום משתמשים</b> — Professional 5 · Enterprise 10; המעבר מקפיץ את העלות הכוללת</li>
+        <li><b>תוספים</b> — מידע שאינו מפורט בעמוד המחירים לא מוצג</li>
+        <li><b>מוצר Marketing נפרד</b> — $15–$75/משתמש/חודש</li>
+      </ul></div>
+
+    </div>
+    <div class="divider"></div>
+
+
+
+
+    <div class="sysblock" id="zoho">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#E42527,#F9B21D)">Z</div>
+        <div><h3>Zoho CRM</h3><div class="cat">CRM · USD · לפי משתמש · ללא התחייבות</div></div></div>
+        <a class="plink" href="https://www.zoho.com/crm/zohocrm-pricing.html" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">מחירי משתמש בחיוב שנתי או חודשי, לפי הבחירה בעמוד המחירים הרשמי.</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Free</div><div class="pprice">$0</div><div class="psub">עד 3 משתמשים</div><ul><li>ניהול קשרים · אוטומציה בסיסית</li></ul></div>
+        <div class="plan"><div class="pname">Standard</div><div class="pprice">$14 <small>($20) /משתמש</small></div><div class="psub"></div><ul><li>תחזיות · דוחות</li></ul></div>
+        <div class="plan pop"><span class="poptag">הנפוץ ביותר</span><div class="pname">Professional</div><div class="pprice">$23 <small>($35) /משתמש</small></div><div class="psub"></div><ul><li>Blueprint · CPQ · מלאי</li></ul></div>
+        <div class="plan"><div class="pname">Enterprise</div><div class="pprice">$40 <small>($50) /משתמש</small></div><div class="psub"></div><ul><li>Zia AI · טריטוריות · פורטלים</li></ul></div>
+        <div class="plan"><div class="pname">Ultimate</div><div class="pprice">$52 <small>($65) /משתמש</small></div><div class="psub"></div><ul><li>BI מתקדם · ML מותאם</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>מהדורה + משתמשים</b> · ללא חוזים ארוכים</li>
+        <li><b>מע״מ/מיסים מקומיים</b> נוספים למחיר</li>
+      </ul></div>
+      <div class="apibox"><h4><span class="apitag">API</span> עלות ושימוש ב-API</h4>
+      <p>גישה ל־<b>API</b> מופיעה במחירון כבר בחבילת Free. עמוד המחירים אינו מציג עלות API נפרדת או תעריף שימוש.</p></div>
+
+    </div>
+    </div>
+</section>
+
+<!-- ======== CAT 4: SERVICE ======== -->
+<section class="cat" id="cat-service">
+  <div class="wrap">
+    <div class="cathead"><span class="catnum" style="color:#22D3EE">04</span><h2>שירות לקוחות ותקשורת רב־ערוצית</h2><span class="catcount">מערכת אחת</span></div>
+    <p class="catsub">Glassix — פלטפורמת תקשורת רב־ערוצית ישראלית, מתומחרת לפי משתמשים (עמלות WhatsApp של Meta בנפרד).</p>
+
+
+
+
+
+    <div class="sysblock" id="glassix">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#22D3EE,#0891B2)">G</div>
+        <div><h3>Glassix</h3><div class="cat">אומניצ׳אנל ישראלי (WhatsApp, צ׳אט, סושיאל) · USD · לפי משתמש</div></div></div>
+        <a class="plink" href="https://www.glassix.com/pricing" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">ללא חיוב לפי נפח שיחות — התמחור לפי משתמשים בלבד (עמלות Meta ל־WhatsApp חלות בנפרד). מחירים: שנתי / (חודשי).</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Starter</div><div class="pprice">$41.65 <small>($49) /משתמש</small></div><div class="psub">1–5 משתמשים</div><ul><li>4 ערוצים · 50K שיחות בוט</li><li>ללא API וללא AI</li></ul></div>
+        <div class="plan pop"><span class="poptag">הנפוץ ביותר</span><div class="pname">Growth</div><div class="pprice">$52 <small>($65) /משתמש</small></div><div class="psub">מינימום 2 · עד 9 משתמשים</div><ul><li>8 ערוצים · 100K שיחות בוט</li><li>API חלקי · AI כתוסף</li></ul></div>
+        <div class="plan"><div class="pname">Enterprise</div><div class="pprice">מותאם</div><div class="psub">ללא הגבלת משתמשים</div><ul><li>AI מלא · SSO · API מלא</li><li>25 מותגים · 500K שיחות בוט</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>משתמשים + תוכנית</b> — בחיוב שנתי או חודשי</li>
+        <li><b>תוספי AI</b> — בתשלום נוסף (מחיר לא מפורסם)</li>
+        <li><b>עמלות WhatsApp של Meta</b> — בנפרד</li>
+      </ul></div>
+      <div class="apibox"><h4><span class="apitag">API</span> עלות ושימוש ב-API</h4>
+      <p><span class="none">Starter ללא API</span> · חבילת Growth כוללת גישה מוגבלת ל־REST API · חבילת Enterprise כוללת גישה ללא הגבלה, כפי שמוצג במחירון.</p></div>
+
+    </div>
+  </div>
+</section>
+<!-- ======== CAT 5: MESSAGING ======== -->
+<section class="cat" id="cat-msg">
+  <div class="wrap">
+    <div class="cathead"><span class="catnum" style="color:#25D366">05</span><h2>WhatsApp, צ׳אטבוטים ושיווק בהודעות</h2><span class="catcount">4 מערכות</span></div>
+    <p class="catsub">בכל הפלטפורמות בקטגוריה: <b>עמלות ההודעות של Meta (WhatsApp) נגבות בנפרד מהמנוי</b> — בקמפיינים גדולים הן יכולות לעלות על מחיר המנוי. לתמחר תמיד בנפרד מול הלקוח.</p>
+
+    <div class="sysblock" id="manychat">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#0084FF,#00C2FF)">MC</div>
+        <div><h3>ManyChat</h3><div class="cat">צ׳אטבוטים (IG / WhatsApp / Messenger / TikTok / Telegram) · USD</div></div></div>
+        <a class="plink" href="https://manychat.com/pricing" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">מחיר בסיס + חיוב לפי <b>Active Contacts</b> (איש קשר שהייתה איתו אינטראקציה בחודש). מכסה כלולה + תעריף חריגה שיורד בתוכניות גבוהות. <b>WhatsApp/SMS/אימייל — רק מ־Pro.</b> שנתי חוסך 18–30%. החבילות במודל החדש עשויות להשתנות לפי אזור וחשבון.</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Free</div><div class="pprice">$0</div><div class="psub">25 אנשי קשר</div><ul><li>2 ערוצים · עד 4 אוטומציות · משתמש אחד</li></ul></div>
+        <div class="plan"><div class="pname">Essential</div><div class="pprice">$17 <small>חודשי · $14 שנתי</small></div><div class="psub">250 כלולים · חריגה $0.10 / $0.082</div><ul><li>2 ערוצים · אוטומציות ללא הגבלה · 2 משתמשים</li></ul></div>
+        <div class="plan pop"><span class="poptag">הנפוץ ביותר</span><div class="pname">Pro</div><div class="pprice">$39 <small>חודשי · $29 שנתי</small></div><div class="psub">2,500 כלולים · חריגה $0.05 / $0.038</div><ul><li>3 ערוצים כולל <b>WhatsApp, SMS ואימייל</b></li><li>אוטומציות מתקדמות ו-AI · 3 משתמשים</li></ul></div>
+        <div class="plan"><div class="pname">Business</div><div class="pprice">$99 <small>חודשי · $69 שנתי</small></div><div class="psub">7,500 כלולים · חריגה $0.025 / $0.018</div><ul><li>ערוצים ללא הגבלה · Team Inbox וניתוב לידים · 5 משתמשים</li></ul></div>
+        <div class="plan"><div class="pname">Advanced</div><div class="pprice">$199 <small>חודשי · $139 שנתי</small></div><div class="psub">25,000 כלולים · חריגה $0.004 / $0.0028</div><ul><li>ערוצים ללא הגבלה · API ואינטגרציות מותאמות · 10 משתמשים</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ דוגמאות עלות + גורמי מחיר</h4><ul>
+        <li><b>אנשי קשר פעילים כלולים</b> — המכסה והתעריף מעבר למכסה משתנים לפי החבילה</li>
+        <li><b>תקופת החיוב</b> — מחיר חודשי או מחיר מופחת בחיוב שנתי</li>
+        <li><b>עמלות Meta ל־WhatsApp</b> — בנפרד, דרך Meta</li>
+      </ul></div>
+      <div class="apibox"><h4><span class="apitag">API</span> עלות ושימוש ב-API</h4>
+      <p>גישה ל־<b>API ואינטגרציות מותאמות</b> מופיעה במחירון בחבילת Advanced. לא מוצגת עלות API נפרדת.</p></div>
+
+    </div>
+    <div class="divider"></div>
+
+    <div class="sysblock" id="heyy">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#25D366,#0BA360)">H</div>
+        <div><h3>Heyy</h3><div class="cat">WhatsApp API + עובדי AI (ישראלית, heyy.io) · USD · לפי Workspace</div></div></div>
+        <a class="plink" href="https://www.heyy.io/pricing" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">תמחור לפי Workspace עם מכסת משתמשים וקרדיטים. <b>קרדיטים ועמלות WhatsApp מחויבים בנפרד.</b> שנתי = חודשיים מתנה. מחירים: שנתי / (חודשי).</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Hobby</div><div class="pprice">$41 <small>($49) /חודש</small></div><div class="psub">1 משתמש · 1,000 קרדיטים</div><ul><li>עובד AI אחד · 3 ערוצים</li><li>קמפיינים · Mini-CRM · API</li></ul></div>
+        <div class="plan pop"><span class="poptag">הנפוץ ביותר</span><div class="pname">Pro</div><div class="pprice">$125 <small>($149) /חודש</small></div><div class="psub">5 משתמשים · 6,000 קרדיטים</div><ul><li>2 עובדי AI · ערוצים ללא הגבלה</li><li>Journeys</li></ul></div>
+        <div class="plan"><div class="pname">Ultra</div><div class="pprice">$416 <small>($499) /חודש</small></div><div class="psub">10 משתמשים · 20,000 קרדיטים</div><ul><li>3 עובדי AI · הסרת מיתוג</li></ul></div>
+        <div class="plan"><div class="pname">Enterprise</div><div class="pprice">מותאם</div><div class="psub"></div><ul><li>SLA · CSM · ליווי הגירה</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>צריכת קרדיטים</b> (AI + הודעות) — חריגה בתשלום נפרד</li>
+        <li><b>עמלות WhatsApp של Meta</b> — על גבי המנוי</li>
+        <li><b>משתמשים ועובדי AI</b> לפי תוכנית</li>
+      </ul></div>
+      <div class="apibox"><h4><span class="apitag">API</span> עלות ושימוש ב-API</h4>
+      <p>גישה ל־<b>API</b> מופיעה במחירון כבר בחבילת Hobby. לא מוצגת עלות API נפרדת.</p></div>
+
+    </div>
+    <div class="divider"></div>
+
+    <div class="sysblock" id="wati">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#00C878,#00A76B)">W</div>
+        <div><h3>Wati</h3><div class="cat">WhatsApp Business API · USD · מנוי + הודעות לפי תעריפון</div></div></div>
+        <a class="plink" href="https://www.wati.io/pricing" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc"><b>המחיר משתנה לפי אזור וחשבון</b>, ולכן יש לאמת את המחיר במחירון הרשמי לפני הצעה ללקוח. הודעות WhatsApp מחויבות בנפרד לפי תעריפון Wati.</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Growth</div><div class="pprice">לפי אזור</div><div class="psub">3 משתמשים · הודעות בתשלום נוסף</div><ul><li>1,000 טריגרי אוטומציה/חודש</li><li>ברודקאסט 15K/חודש</li></ul></div>
+        <div class="plan pop"><span class="poptag">Best Value</span><div class="pname">Pro</div><div class="pprice">לפי אזור</div><div class="psub">5 משתמשים · הודעות בתשלום נוסף</div><ul><li>2,000 טריגרים · ברודקאסט ללא הגבלה</li><li>אינטגרציית HubSpot</li></ul></div>
+        <div class="plan"><div class="pname">Business</div><div class="pprice">מותאם</div><div class="psub">5 משתמשים · הודעות בתשלום נוסף</div><ul><li>5,000 טריגרים</li><li>אינטגרציות ללא הגבלה</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>הודעות WhatsApp</b> — לפי מדינת הנמען וסוג התבנית (שיווק/תפעול/אימות); מיולי 2025 חיוב פר הודעה</li>
+        <li><b>משתמשים נוספים</b> — $24–69 לפי תוכנית · טריגרי אוטומציה מעבר למכסה</li>
+        <li><b>אזור</b> — המחירון מותאם גיאוגרפית; לוודא מחיר מהחשבון שלכם לפני הצעה</li>
+      </ul></div>
+      <div class="apibox"><h4><span class="apitag">API</span> עלות ושימוש ב-API</h4>
+      <p><b>כלול בכל התוכניות</b>, מכסה חודשית: Growth 10K · Pro 200K · Business 20M קריאות + Webhooks. הודעות WhatsApp בתשלום נפרד (תעריפון מעל Meta).</p></div>
+
+    </div>
+    <div class="divider"></div>
+
+
+
+    <div class="sysblock" id="greenapi">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#25D366,#128C7E)">GA</div>
+        <div><h3>Green API</h3><div class="cat">WhatsApp API לא־רשמי (מכשיר מקושר) · USD · לפי instance</div></div></div>
+        <a class="plink" href="https://green-api.com/en/" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc"><b>לא</b> ה-API הרשמי של Meta — חיבור דרך מכשיר מקושר (WhatsApp Web). <b>instance = מספר וואטסאפ אחד</b>, והתמחור הוא לכל instance בחודש. היתרון: <b style="color:var(--green)">ללא עמלות שיחה של Meta</b> — מנוי קבוע בלבד. החיסרון: סיכון לחסימת המספר ע״י WhatsApp (שימוש לא־רשמי).</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Developer</div><div class="pprice">$0</div><div class="psub">instance אחד · לבדיקות</div><ul><li>רק <b>3 צ׳אטים</b> · 100MB לקובץ</li><li>100 checkWhatsapp · 10 סטטוסים/חודש</li></ul></div>
+        <div class="plan pop"><span class="poptag">הנפוץ ביותר</span><div class="pname">Business</div><div class="pprice">$12 <small>/חודש/instance</small></div><div class="psub">שליחה לכל מספר</div><ul><li>צ׳אטים <b>ללא הגבלה</b> · instances ללא הגבלה</li><li>30,000 checkWhatsapp · Webhooks</li></ul></div>
+        <div class="plan"><div class="pname">Chatbot</div><div class="pprice">$24 <small>/חודש/instance</small></div><div class="psub">+ White-Label</div><ul><li>הכל מ-Business · סטטוסים ללא הגבלה</li><li>ניהול חשבון ייעודי</li></ul></div>
+        <div class="plan"><div class="pname">Partner</div><div class="pprice">$0.40 <small>/יום</small></div><div class="psub">משווקים / נפח גבוה</div><ul><li>White-label · חיוב יומי</li><li>הנחות כמות · קו אשראי</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>מספר ה-instances</b> — כל מספר וואטסאפ = instance נפרד בתשלום ($12/חודש ב-Business)</li>
+        <li><b>מכסות התוכנית</b> — כמות צ׳אטים, בדיקות מספר וסטטוסים משתנה לפי החבילה</li>
+        <li><b>Partner</b> — חיוב יומי לפי המחירון הרשמי</li>
+      </ul></div>
+      <div class="apibox"><h4><span class="apitag">API</span> עלות ושימוש ב-API</h4>
+      <p>ה־API הוא המוצר: <span class="free">Developer ללא עלות</span> ומיועד לבדיקות מוגבלות; Business עולה <b>$12 לחודש לכל instance</b>. המכסות המפורטות משתנות לפי החבילה.</p></div>
+      <div class="note"><b>לתמחור ללקוח:</b> חלופה זולה ל-WhatsApp אוטומטי בפרויקטים קטנים/פנימיים, אבל לא לשימוש רשמי בקנה מידה — שם עדיף WABA רשמי (Wati/Heyy/Glassix).</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== CAT 6: EMAIL ======== -->
+<section class="cat" id="cat-email">
+  <div class="wrap">
+    <div class="cathead"><span class="catnum" style="color:#FBBF24">06</span><h2>דיוור ושיווק במייל</h2><span class="catcount">4 מערכות</span></div>
+    <p class="catsub">כולן מתומחרות לפי כמות אנשי קשר/מנויים — המחיר מטפס עם הרשימה. ההבדל המרכזי: מכפילי השליחה (כמה מיילים מותר לשלוח ביחס לגודל הרשימה) והאם SMS ודפי נחיתה כלולים.</p>
+
+
+
+    <div class="sysblock" id="activecampaign">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#356AE6,#004CFF)">AC</div>
+        <div><h3>ActiveCampaign</h3><div class="cat">אוטומציה שיווקית מתקדמת · USD · לפי אנשי קשר</div></div></div>
+        <a class="plink" href="https://www.activecampaign.com/pricing" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">המחירים ב־1,000 אנשי קשר, חיוב שנתי / (חודשי). שליחה: פי 10–15 מהרשימה לפי תוכנית.</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Starter</div><div class="pprice">$15 <small>($19) /חודש</small></div><div class="psub">עד 25K אנשי קשר</div><ul><li>5K: $79 · 10K: $149</li></ul></div>
+        <div class="plan"><div class="pname">Plus</div><div class="pprice">$49 <small>($59) /חודש</small></div><div class="psub"></div><ul><li>5K: $145 · 10K: $189</li><li>דפי נחיתה · AI</li></ul></div>
+        <div class="plan pop"><span class="poptag">הנפוץ ביותר</span><div class="pname">Pro</div><div class="pprice">$79 <small>/חודש · בחיוב שנתי</small></div><div class="psub">3 משתמשים</div><ul><li>5K: $205 · 10K: $375</li><li>Predictive sending · Attribution</li></ul></div>
+        <div class="plan"><div class="pname">Enterprise</div><div class="pprice">מ־$145 <small>/חודש</small></div><div class="psub">5 משתמשים</div><ul><li>HIPAA · Salesforce · תמיכה ייעודית</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>מדרגות אנשי קשר</b> — 1K / 2.5K / 5K / 10K / 25K / 50K...</li>
+        <li><b>תוספים וחריגות</b> — אינם מוצגים ללא מחיר מפורש בעמוד המחירים</li>
+      </ul></div>
+
+    </div>
+    <div class="divider"></div>
+
+
+
+    <div class="sysblock" id="activetrail">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#00B5AD,#00897B)">AT</div>
+        <div><h3>ActiveTrail</h3><div class="cat">דיוור ואוטומציה ישראלי · ₪ לפני מע״מ · לפי אנשי קשר</div></div></div>
+        <a class="plink" href="https://www.activetrail.co.il/pricing/" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">מחירי "החל מ־" ברף הנמוך של הסליידר, בחיוב שנתי (חוסך 15%). מיילים ללא הגבלה בכל התוכניות.</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Basic</div><div class="pprice">מ־₪50 <small>/חודש</small></div><div class="psub">משתמש אחד</div><ul><li>מיילים ללא הגבלה · דפי נחיתה</li><li>אוטומציות מתקדמות · API</li></ul></div>
+        <div class="plan pop"><span class="poptag">הנפוץ ביותר</span><div class="pname">Plus</div><div class="pprice">מ־₪60 <small>/חודש</small></div><div class="psub">עד 10 משתמשים</div><ul><li>+ ריטרגטינג · אוטומציות eCommerce</li><li>חיזוי זמן שליחה</li></ul></div>
+        <div class="plan"><div class="pname">Premium</div><div class="pprice">₪1,079 <small>/חודש</small></div><div class="psub">מנוהל · ללא הגבלת משתמשים</div><ul><li>מנהל לקוח ייעודי · הדרכה</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>כמות אנשי קשר</b> (סליידר) — המחיר המדויק לכל מדרגה מוצג באתר בלבד</li>
+        <li><b>SMS</b> — המחירון מציג ₪0.111 להודעה בנפח המוצג · WhatsApp בהצעה</li>
+      </ul></div>
+      <div class="apibox"><h4><span class="apitag">API</span> עלות ושימוש ב-API</h4>
+      <p><b>אינטגרציית API מלאה</b> מופיעה במחירון בחבילת Basic, ו־Webhooks מתווספים בחבילת Plus. לא מוצגת עלות API נפרדת.</p></div>
+
+    </div>
+    <div class="divider"></div>
+
+    <div class="sysblock" id="smoove">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#7C3AED,#A855F7)">S</div>
+        <div><h3>Smoove</h3><div class="cat">שיווק דיגיטלי ישראלי (ViPlus) · ₪ לפני מע״מ · לפי אנשי קשר</div></div></div>
+        <a class="plink" href="https://www.smoove.io/pricing/" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">המחירים ב־100 אנשי קשר (חיוב חודשי); שנתי חוסך 10%. הסליידר עולה עד 20K+ (הצעת מחיר). מכסת SMS יחסית לרשימה.</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Free</div><div class="pprice">₪0</div><div class="psub">עד 100 אנשי קשר</div><ul><li>דפי נחיתה · אוטומציה · CRM</li></ul></div>
+        <div class="plan"><div class="pname">Basic</div><div class="pprice">₪69 <small>/חודש (100)</small></div><div class="psub">SMS פי 3 מהרשימה</div><ul><li>+ SMS · סליקה · WhatsApp בתוספת</li></ul></div>
+        <div class="plan pop"><span class="poptag">הנפוץ ביותר</span><div class="pname">Standard</div><div class="pprice">₪74 <small>/חודש (100)</small></div><div class="psub">SMS פי 5 · 5 משתמשים</div><ul><li>+ eCommerce · A/B · דומיין מותאם</li></ul></div>
+        <div class="plan"><div class="pname">Pro</div><div class="pprice">₪148 <small>/חודש (100)</small></div><div class="psub">SMS פי 7 · 10 משתמשים</div><ul><li>תמיכה ייעודית · שירות חודשי</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>כמות אנשי קשר</b> — סליידר 100 → 20K+; המחיר לכל מדרגה באתר</li>
+        <li><b>SMS מעבר למכסה</b> (ישראל בלבד) · WhatsApp בתשלום נוסף</li>
+      </ul></div>
+
+    </div>
+    <div class="divider"></div>
+
+    <div class="sysblock" id="ravmesser">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#E11D48,#BE123C)">רב</div>
+        <div><h3>רב מסר</h3><div class="cat">דיוור ישראלי (Responder) · ₪ לפני מע״מ · לפי נמענים</div></div></div>
+        <a class="plink" href="https://www.responder.co.il/מחירים/" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">המחירים לחודש <b>בתשלום שנתי</b>. המחיר נקבע לפי מספר הנמענים וכמות המיילים החודשית שנבחרה. כל התוכניות כוללות דפי נחיתה, אוטומציות, CRM (קשר) וקורסים דיגיטליים (סקולר).</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">1,000 נמענים</div><div class="pprice">משתנה</div><div class="psub">מנוי שנתי גמיש</div><ul><li>המחיר מותאם לפעילות בפועל</li></ul></div>
+        <div class="plan pop"><span class="poptag">בינוני</span><div class="pname">5,000 נמענים</div><div class="pprice">משתנה</div><div class="psub">מנוי שנתי גמיש</div><ul><li>המחיר מותאם לפעילות בפועל</li></ul></div>
+        <div class="plan"><div class="pname">10,000 נמענים</div><div class="pprice">משתנה</div><div class="psub">מנוי שנתי גמיש</div><ul><li>המחיר מותאם לפעילות בפועל</li></ul></div>
+        <div class="plan"><div class="pname">20,000 נמענים</div><div class="pprice">משתנה</div><div class="psub">מעל 20K — הצעה מיוחדת</div><ul><li>המחיר מותאם לפעילות בפועל</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>כמות נמענים ונפח מיילים</b> — התאמה אוטומטית לפי שימוש בפועל</li>
+        <li><b>אינטגרציות כלולות</b> — Make, Zapier, מערכות סליקה</li>
+      </ul></div>
+
+    </div>
+  </div>
+</section>
+<!-- ======== CAT 7: PAYMENTS ======== -->
+<section class="cat" id="cat-pay">
+  <div class="wrap">
+    <div class="cathead"><span class="catnum" style="color:#FB7185">07</span><h2>סליקה, תשלומים וחשבוניות</h2><span class="catcount">מערכת אחת</span></div>
+    <p class="catsub">בסליקה המחיר = דמי הקמה + עלות חודשית + עמלת סליקה (%) + עמלת עסקה. הספקים הישראליים לרוב לא מפרסמים מחירון מלא — המחיר נסגר במו״מ לפי מחזור העסקאות.</p>
+
+
+
+    <div class="sysblock" id="cardcom">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#FB7185,#E11D48)">CC</div>
+        <div><h3>Cardcom</h3><div class="cat">סליקה + חשבוניות · ₪ · בהצעת מחיר בלבד</div></div></div>
+        <a class="plink" href="https://www.cardcom.solutions/" target="_blank">↗ לאתר הרשמי</a>
+      </div>
+      <p class="sysdesc">לא נמצא באתר הרשמי מחירון פומבי שמאפשר להציג מחיר או חבילה. לכן לא מוצגים כאן מספרים, הערכות או פרטי חבילות.</p>
+
+    </div>
+    </div>
+</section>
+
+<!-- ======== CAT 8: DOCS ======== -->
+<section class="cat" id="cat-docs">
+  <div class="wrap">
+    <div class="cathead"><span class="catnum" style="color:#14B8A6">08</span><h2>מסמכים, חתימה דיגיטלית וטפסים</h2><span class="catcount">4 מערכות</span></div>
+    <p class="catsub">PowerDoc ו־2Sign מתומחרות לפי נפח מסמכים חודשי; Fillout לפי תגובות לטפסים. בפרויקטים עם הפקת מסמכים + חתימה — להשוות PowerDoc (עושה את שניהם) מול 2Sign.</p>
+
+    <div class="sysblock" id="powerdoc">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#14B8A6,#0E9488)">P</div>
+        <div><h3>PowerDoc</h3><div class="cat">הפקת מסמכים + חתימה מרחוק (ישראלי) · ₪ לפני מע״מ · לפי שליחות</div></div></div>
+        <a class="plink" href="https://powerdoc.co.il/prices/" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">כל התוכניות כוללות משתמש, 10 תבניות, שליחה ב־WhatsApp/SMS/מייל, <b>מודול Make ו־API</b> — מתחבר ישירות לאוטומציות monday/Fireberry. שנתי חוסך עד 18%.</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Power</div><div class="pprice">₪35 <small>/חודש</small></div><div class="psub">שנתי: ₪350 (200 שליחות/שנה)</div><ul><li><b>15</b> שליחות/חודש · 250 אנשי קשר</li></ul></div>
+        <div class="plan"><div class="pname">Power Plus</div><div class="pprice">₪57 <small>/חודש</small></div><div class="psub">שנתי: ₪564 (360 שליחות)</div><ul><li><b>30</b> שליחות/חודש · 450 אנשי קשר</li></ul></div>
+        <div class="plan pop"><span class="poptag">הנפוץ ביותר</span><div class="pname">Power Pro</div><div class="pprice">₪99 <small>/חודש</small></div><div class="psub">שנתי: ₪1,068 (840 שליחות)</div><ul><li><b>70</b> שליחות/חודש · 1,000 אנשי קשר</li></ul></div>
+        <div class="plan"><div class="pname">Full Power</div><div class="pprice">מותאם</div><div class="psub">נפחים גדולים</div><ul><li>משתמשים ותבניות מרובים</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>כמות שליחות</b> — יחידת המדידה; מתאפסת כל תקופה</li>
+        <li><b>תוספים (שנתי)</b> — משתמש ₪319 · 5 תבניות ₪60 · דף נחיתה ₪60 · 200 אנשי קשר ₪70</li>
+        <li><b>חבילות קרדיטים</b> — ₪75–₪750 ל־300–5,000 יחידות</li>
+      </ul></div>
+      <div class="apibox"><h4><span class="apitag">API</span> עלות ושימוש ב-API</h4>
+      <p><span class="free">מודול Make וממשקי API מופיעים בכל החבילות המוצגות</span>. המחירון אינו מציג עלות API נפרדת.</p></div>
+
+    </div>
+    <div class="divider"></div>
+
+    <div class="sysblock" id="twosign">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#84CC16,#4CAF50)">2S</div>
+        <div><h3>2Sign · חתימה ירוקה</h3><div class="cat">חתימה דיגיטלית (ישראלי) · ₪ לפני מע״מ · לפי מסמכים</div></div></div>
+        <a class="plink" href="https://www.2sign.co.il/pricing/" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">מחירים במסלול שנתי / (חודשי) — שנתי חוסך 10%. חודש ניסיון חינם.</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Starter</div><div class="pprice">₪35 <small>(₪39) /חודש</small></div><div class="psub">25 מסמכים/חודש</div><ul><li>תבנית אחת · 50 אנשי קשר</li></ul></div>
+        <div class="plan pop"><span class="poptag">הנפוץ ביותר</span><div class="pname">Pro</div><div class="pprice">₪71 <small>(₪79) /חודש</small></div><div class="psub">100 מסמכים · 20 תבניות</div><ul><li>שליחה ב־<b>WhatsApp</b> · <b>API מלא</b></li><li>מיתוג עסקי · 2 משתמשי משנה</li></ul></div>
+        <div class="plan"><div class="pname">Business</div><div class="pprice">₪158 <small>(₪175) /חודש</small></div><div class="psub">250 מסמכים · 30 תבניות</div><ul><li>טפסים · OTP · 3 משתמשי משנה</li></ul></div>
+        <div class="plan"><div class="pname">Enterprise</div><div class="pprice">מותאם</div><div class="psub">1,000+ מסמכים</div><ul><li>API ללא הגבלה · 5+ משתמשים</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>נפח מסמכים חודשי</b> — 25 / 100 / 250 / 1,000+</li>
+        <li><b>פיצ׳רים לפי תוכנית</b> — WhatsApp ו־API מ־Pro; OTP וטפסים מ־Business</li>
+      </ul></div>
+      <div class="apibox"><h4><span class="apitag">API</span> עלות ושימוש ב-API</h4>
+      <p><span class="none">אין API ב-Starter</span> · <b>API רק מ-Pro ומעלה</b>. שליחה דרך API צורכת ממכסת המסמכים החודשית. <b>Enterprise</b> = שליחת מסמכים ללא הגבלה ב-API.</p></div>
+
+    </div>
+    <div class="divider"></div>
+
+    <div class="sysblock" id="easydo">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#2DD4BF,#0D9488)">ED</div>
+        <div><h3>EasyDo</h3><div class="cat">חתימה דיגיטלית + אוטומציית תהליכים ו-HR (ישראלי) · ₪ לפני מע״מ · לפי שליחות</div></div></div>
+        <a class="plink" href="https://easydo.co.il/מחירון/" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">פלטפורמה ישראלית לחתימה דיגיטלית, טפסים, ניהול תהליכים וקליטת עובדים (HR, כולל טופס 101). מתחברת ל-Make/Zapier/Salesforce/monday. מחירים: שנתי / (חודשי). למטה מוצג מודול <b>Sign</b> (מקביל ל-PowerDoc/2Sign); קיים גם מודול <b>HR</b> נפרד.</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Free</div><div class="pprice">₪0</div><div class="psub">10 שליחות/חודש</div><ul><li>250 אנשי קשר</li></ul></div>
+        <div class="plan"><div class="pname">Basic</div><div class="pprice">₪16 <small>(₪19) /חודש</small></div><div class="psub">20 שליחות · 2 תבניות</div><ul><li>500 אנשי קשר</li></ul></div>
+        <div class="plan pop"><span class="poptag">הנפוץ ביותר</span><div class="pname">Pro</div><div class="pprice">₪48 <small>(₪59) /חודש</small></div><div class="psub">100 שליחות · 10 תבניות</div><ul><li>2,000 אנשי קשר</li></ul></div>
+        <div class="plan"><div class="pname">Business</div><div class="pprice">₪122 <small>(₪149) /חודש</small></div><div class="psub">250 שליחות · 30 תבניות</div><ul><li>אנשי קשר ללא הגבלה</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>כמות שליחות חודשית</b> — יחידת המדידה המרכזית (10 / 20 / 100 / 250)</li>
+        <li><b>אנשי קשר ותבניות</b> · אחסון (במודול HR)</li>
+        <li><b>מודול HR נפרד</b> — Free ₪0 (עד 20 עובדים) · Basic ₪60 · Pro ₪149 · Enterprise בהצעה</li>
+        <li><b>מסירה ב-WhatsApp/SMS</b> — ערוץ מדיד/תוסף (לא מפורט בנפרד)</li>
+      </ul></div>
+      <div class="apibox"><h4><span class="apitag">API</span> עלות ושימוש ב-API</h4>
+      <p>API מופיע בחבילת Business בעמוד המחירים. לא מוצגות עלות או מגבלות שאינן מפורטות שם.</p></div>
+    </div>
+    <div class="divider"></div>
+
+    <div class="sysblock" id="fillout">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#F97316,#EA580C)">Fi</div>
+        <div><h3>Fillout</h3><div class="cat">בניית טפסים · USD · לפי תגובות · משתמשים ללא הגבלה</div></div></div>
+        <a class="plink" href="https://www.fillout.com/pricing" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">ציר המחיר היחיד: <b>נפח תגובות חודשי</b> — מושבים ללא הגבלה בכל התוכניות. שנתי / (חודשי), שנתי חוסך 20%. אינטגרציות נייטיב ל־Notion/Airtable/Sheets גם בחינם.</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Free</div><div class="pprice">$0</div><div class="psub">1,000 תגובות/חודש</div><ul><li>טפסים ללא הגבלה · תשלומים · לוגיקה</li></ul></div>
+        <div class="plan"><div class="pname">Starter</div><div class="pprice">$15 <small>($19) /חודש</small></div><div class="psub">2,000 תגובות</div><ul><li>כל סוגי השאלות · טפסי התחברות</li></ul></div>
+        <div class="plan pop"><span class="poptag">הנפוץ ביותר</span><div class="pname">Pro</div><div class="pprice">$40 <small>($49) /חודש</small></div><div class="psub">5,000 תגובות</div><ul><li>ללא מיתוג · קישורים, גופנים ו־CSS מותאמים</li></ul></div>
+        <div class="plan"><div class="pname">Business</div><div class="pprice">$75 <small>($89) /חודש</small></div><div class="psub">תגובות ללא הגבלה</div><ul><li>אנליטיקה · דומיין וקוד מותאמים · תמיכה בעדיפות</li></ul></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>נפח תגובות חודשי</b> — הציר היחיד (1K / 2K / 5K / ∞)</li>
+        <li><b>שערי פיצ׳רים</b> — דומיינים, אנליטיקס, White-label לפי תוכנית</li>
+      </ul></div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ======== CAT 9: ERP ======== -->
+<section class="cat" id="cat-erp">
+  <div class="wrap">
+    <div class="cathead"><span class="catnum" style="color:#818CF8">09</span><h2>מערכות ERP</h2><span class="catcount">מערכת אחת</span></div>
+    <p class="catsub">מחירון Priority Zoom הרשמי אינו מציג כרגע מידע פומבי ללא כניסה, ולכן לא מוצגים כאן מחיר או הערכות.</p>
+
+
+
+    <div class="sysblock" id="priority">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#E4002B,#B00020)">Pr</div>
+        <div><h3>Priority</h3><div class="cat">ERP ישראלי · המחירון דורש כניסה</div></div></div>
+        <a class="plink" href="https://eshop.priority-software.com/priority-zoom" target="_blank">↗ לחנות Zoom הרשמית</a>
+      </div>
+      <p class="sysdesc">העמוד הרשמי מפנה למסך כניסה ואינו חושף מחיר, חבילות או תנאים. בהתאם לכך לא מוצגים כאן נתונים שלא ניתן לאמת בעמוד המחירון.</p>
+
+    </div>
+    </div>
+</section>
+
+<!-- ======== CAT 10: TELEPHONY ======== -->
+<section class="cat" id="cat-tel">
+  <div class="wrap">
+    <div class="cathead"><span class="catnum" style="color:#38BDF8">10</span><h2>טלפוניה ומוקדים טלפוניים</h2><span class="catcount">מערכת אחת</span></div>
+    <p class="catsub">מרכזייה בענן ומוקד טלפוני. המחירון מציג מחיר חודשי למשתמש לפי החבילה.</p>
+
+    <div class="sysblock" id="voicenter">
+      <div class="syshead">
+        <div class="title"><div class="logo" style="background:linear-gradient(135deg,#38BDF8,#0284C7)">VC</div>
+        <div><h3>Voicenter</h3><div class="cat">מרכזייה בענן · מוקד טלפוני · CPaaS (ישראלי) · ₪ · לפי משתמש</div></div></div>
+        <a class="plink" href="https://www.voicenter.co.il/pricing" target="_blank">↗ למחירון הרשמי</a>
+      </div>
+      <p class="sysdesc">המחירון הרשמי מציג מחיר למשתמש ואת ארבע החבילות Business, Sales, Support ו־Pro. אין בו מסלול שנתי מקביל.</p>
+      <div class="plans">
+        <div class="plan"><div class="pname">Business</div><div class="pprice">₪80 <small>/משתמש/חודש</small></div><div class="psub">מינימום 3 משתמשים · כל הכלים שהעסק צריך להתחיל לדבר עם לקוחות</div></div>
+        <div class="plan pop"><span class="poptag">מוקד</span><div class="pname">Sales</div><div class="pprice">₪170 <small>/משתמש/חודש</small></div><div class="psub">מינימום 2 משתמשים · מ־5 משתמשים ₪160 למשתמש · פתרונות להגברת תפוקת מכר ומענה ללקוחות</div></div>
+        <div class="plan"><div class="pname">Support</div><div class="pprice">₪170 <small>/משתמש/חודש</small></div><div class="psub">מינימום 2 משתמשים · כלים לשיפור השירות ללקוחות</div></div>
+        <div class="plan"><div class="pname">Pro</div><div class="pprice">₪180 <small>/משתמש/חודש</small></div><div class="psub">מינימום 5 משתמשים · כל הכלים המתקדמים של Voicenter</div></div>
+      </div>
+      <div class="factors"><h4>⚡ מה משפיע על המחיר</h4><ul>
+        <li><b>מסלול ומספר משתמשים</b> — לכל חבילה מחיר ומינימום משתמשים משלה</li>
+        <li><b>מדרגת Sales</b> — ₪170 למשתמש עבור 2–4 משתמשים; ₪160 למשתמש מ־5</li>
+        <li><b>תקופת חיוב</b> — בעמוד המחירים מוצג מחיר חודשי בלבד</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><b>הסתייגות:</b> המידע נבדק מול עמודי המחירים הרשמיים של הספקים בתאריך 22.9.2026 וכפוף לשינויים. לא מוצגים מחירים או פרטי חבילות ממקורות צד־שלישי. כאשר עמוד המחירים אינו מספק נתון, הנתון אינו מוצג.</p>
+  </div>
+</footer>
+</div>
+
+<script src="pricing-core.js"></script>
+<script src="plan-details.js"></script>
+<script>
+(function(){
+const THEME_KEY='optimate-pricing-theme-v1';
+function readStoredTheme(){try{return localStorage.getItem(THEME_KEY);}catch(e){return null;}}
+function setTheme(theme){
+  var safe=theme==='light'?'light':'dark';
+  document.documentElement.dataset.theme=safe;
+  var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=safe==='light'?'#F5F7FB':'#060B17';
+  var toggle=document.getElementById('theme-toggle');if(toggle){toggle.textContent=safe==='light'?'🌙':'☀️';toggle.setAttribute('aria-pressed',safe==='light'?'true':'false');}
+  try{localStorage.setItem(THEME_KEY,safe);}catch(e){}
+}
+function setView(view,targetId){
+  var home=view==='home',homeView=document.getElementById('home-view'),pricingView=document.getElementById('pricing-view');
+  homeView.hidden=!home;pricingView.hidden=home;
+  document.getElementById('home-link').classList.toggle('active',home);
+  document.getElementById('pricing-link').classList.toggle('active',!home);
+  if(!home&&targetId){requestAnimationFrame(function(){var target=document.getElementById(targetId);if(target)target.scrollIntoView();});}
+}
+function routeFromHash(){
+  var target=decodeURIComponent(location.hash.replace(/^#/,''));
+  if(!target||target==='home'){setView('home');return;}
+  if(target==='pricing'){setView('pricing');return;}
+  setView('pricing',target);
+}
+setTheme(readStoredTheme()==='light'?'light':'dark');
+document.getElementById('theme-toggle').addEventListener('click',function(){setTheme(document.documentElement.dataset.theme==='light'?'dark':'light');});
+window.addEventListener('hashchange',routeFromHash);
+const CALC={
+ monday:{cur:'$',model:'seatpick',bill:true,unit:'מספר מושבים',buckets:[3,5,10,15,20,25,30,40,50,100,200],def:10,
+   table:{3:{a:[27,36,57],m:[36,42,72]},5:{a:[45,60,95],m:[60,70,120]},10:{a:[90,120,190],m:[120,140,240]},15:{a:[135,180,285],m:[180,210,360]},20:{a:[190,260,410],m:[252.5,305,517.5]},25:{a:[235,320,505],m:[312.5,375,637.5]},30:{a:[280,380,600],m:[372.5,445,757.5]},40:{a:[370,500,790],m:[492.5,585,997.5]}},
+   note:'מחירים רשמיים מדויקים (סה״כ לחודש). עד 15 מושבים — לינארי לפי מחיר למושב; מ-20 מושבים נוספת תוספת קבועה; מ-50 מושבים ומעלה monday מציגה "בהצעה" בלבד.',plans:[
+   {n:'Basic',p:{a:9,m:12},min:3,inc:['בורדים ללא הגבלה','1,000 קרדיטים AI','ללא אוטומציות']},
+   {n:'Standard',p:{a:12,m:14},min:3,inc:['250+250 פעולות/חודש','Gantt · אורחים','2,000 AI']},
+   {n:'Pro',p:{a:19,m:24},min:3,inc:['25,000 פעולות/חודש','נוסחאות · מעקב זמן','3,000 AI']},
+   {n:'Enterprise',p:null,min:3,inc:['250,000 פעולות/חודש','אבטחה מתקדמת · 24/7']}]},
+ fireberry:{cur:'₪',model:'seat',bill:true,unit:'משתמשים',min:3,max:100,note:'מחירים למשתמש/חודש לפני מע״מ. Sales Standard זמין בתשלום שנתי בלבד.',plans:[
+   {n:'Standard',p:{a:120,m:null},min:3,annualOnly:true,inc:['עד 10,000 לקוחות','ניהול תהליכי מכירה ושירות','שדות מותאמים · לוחות בקרה']},
+   {n:'Professional',p:{a:150,m:180},min:5,inc:['עד 200K לקוחות','50 אוטומציות','אובייקטים מותאמים']},
+   {n:'Enterprise',p:{a:250,m:300},min:10,inc:['ללא הגבלת לקוחות','500 אוטומציות','מבוססות זמן']}]},
+ zoho:{cur:'$',model:'seat',bill:true,unit:'משתמשים',min:1,max:100,plans:[
+   {n:'Standard',p:{a:14,m:20},min:1,inc:['תחזיות · דוחות']},
+   {n:'Professional',p:{a:23,m:35},min:1,inc:['Blueprint · CPQ · מלאי']},
+   {n:'Enterprise',p:{a:40,m:50},min:1,inc:['Zia AI · טריטוריות · פורטלים']},
+   {n:'Ultimate',p:{a:52,m:65},min:1,inc:['BI מתקדם · ML מותאם']}]},
+ glassix:{cur:'$',model:'seat',bill:true,unit:'משתמשים',min:1,max:50,note:'עמלות WhatsApp של Meta בנפרד.',plans:[
+   {n:'Starter',p:{a:41.65,m:49},min:1,inc:['4 ערוצים','50K שיחות בוט']},
+   {n:'Growth',p:{a:52,m:65},min:2,inc:['8 ערוצים','100K שיחות בוט','API חלקי']},
+   {n:'Enterprise',p:null,min:1,inc:['AI מלא · SSO · API מלא','25 מותגים']}]},
+ voicenter:{cur:'₪',model:'seat',unit:'משתמשים',min:1,max:100,note:'מחיר חודשי למשתמש כפי שמוצג במחירון הרשמי.',plans:[
+   {n:'Business',p:80,min:3,inc:['מרכזייה עסקית בסיסית']},
+   {n:'Sales',p:170,min:2,rates:[[5,160]],inc:['פתרונות למוקד מכירות']},
+   {n:'Support',p:170,min:2,inc:['כלים למוקד שירות']},
+   {n:'Pro',p:180,min:5,inc:['סט יכולות מלא']}]},
+ greenapi:{cur:'$',model:'static',note:'בחירת חבילה קבועה; ללא מד instances.',plans:[
+   {n:'Developer',p:0,inc:['3 צ׳אטים בלבד · לבדיקות']},
+   {n:'Business',p:12,inc:['צ׳אטים ללא הגבלה','30K checkWhatsapp','Webhooks']},
+   {n:'Chatbot',p:24,inc:['הכל מ-Business','White-Label']}]},
+ make:{cur:'$',model:'maketier',bill:false,billingLabel:' · בחיוב שנתי',unit:'קרדיטים/חודש',note:'מחירים בחיוב שנתי מהסליידר הרשמי של Make. Core עד 300K, Pro/Teams עד 8M.',
+   tiers:[10000,20000,40000,80000,150000,300000,500000,750000,1000000,1500000,2000000,2500000,3000000,4000000,5000000,6000000,7000000,8000000],plans:[
+   {n:'Core',ratio:1.17647,inc:['תרחישים ללא הגבלה','Make API'],a:[9,16,29,55,99,182.16]},
+   {n:'Pro',ratio:1.17647,inc:['משתני Custom','עדיפות בהרצה'],a:[16,29,53,91,153.45,268.54,410.27,576.94,748.73,1078.18,1377.67,1701.13,1983.85,2574.59,3153.88,3707.41,4274.13,4811.4]},
+   {n:'Teams',ratio:1.17647,inc:['צוותים והרשאות','שיתוף תבניות'],a:[29,53,99,172.9,291.56,510.22,779.5,1096.18,1400.67,1969.7,2451.18,3009.26,3446.97,4404.46,5333.52,6342.42,7227.99,8231.05]}]},
+ n8n:{cur:'€',model:'execplan',bill:false,billingLabel:' · בחיוב שנתי',unit:'הרצות/חודש',note:'מחירי n8n המוצגים הם בחיוב שנתי. כל התוכניות: משתמשים ו-workflows ללא הגבלה — התמחור לפי נפח הרצות. אירוח על שרת Optimate מתומחר בנפרד ב־₪500 לחודש לפני מע״מ.',plans:[
+   {n:'Starter',inc:['5 הרצות בו-זמנית','2,300 קרדיטי AI/חודש'],execs:[[2500,20]]},
+   {n:'Pro',inc:['20 בו-זמנית','3 פרויקטים משותפים','7 ימי Insights','עד 13,700 AI/חודש'],execs:[[10000,50],[50000,120],['custom',null]]},
+   {n:'Business',inc:['הכל מ-Pro','concurrency גבוה','ענן או Self-hosted'],execs:[[40000,667],[50000,821],[75000,1213],[100000,1438],[150000,1824],[200000,2199],[300000,2927],[400000,3651],[500000,4371]]},
+   {n:'Enterprise',inc:['200+ בו-זמנית','365 ימי Insights','SSO/Git/סביבות/SLA'],execs:null}]},
+ manychat:{cur:'$',model:'static',bill:true,note:'בחירת חבילה ותקופת חיוב; ללא מד אנשי קשר.',plans:[
+   {n:'Essential',p:{a:14,m:17},inc:['2 ערוצים','אוטומציות ללא הגבלה','2 משתמשים']},
+   {n:'Pro',p:{a:29,m:39},inc:['3 ערוצים כולל WhatsApp/SMS/Email','אוטומציות מתקדמות ו-AI','3 משתמשים']},
+   {n:'Business',p:{a:69,m:99},inc:['ערוצים ללא הגבלה','Team Inbox וניתוב לידים','5 משתמשים']},
+   {n:'Advanced',p:{a:139,m:199},inc:['ערוצים ללא הגבלה','API ואינטגרציות מותאמות','10 משתמשים']}]},
+ activecampaign:{cur:'$',model:'lookup',unit:'אנשי קשר',billingLabel:' · בחיוב שנתי',note:'מחיר חודשי בחיוב שנתי, לפי מדרגת אנשי קשר.',plans:[
+   {n:'Starter',tiers:[[1000,15],[2500,39],[5000,79],[7500,109],[10000,149],[15000,231],[20000,311],[25000,391],[30000,null],[40000,null],[50000,null]],inc:['אימייל · אוטומציה בסיסית · עד 25K אנשי קשר']},
+   {n:'Plus',tiers:[[1000,49],[2500,95],[5000,145],[7500,169],[10000,189],[15000,265],[20000,329],[25000,389],[30000,449],[40000,549],[50000,609]],inc:['דפי נחיתה · AI']},
+   {n:'Pro',tiers:[[1000,79],[2500,149],[5000,205],[7500,289],[10000,375],[15000,465],[20000,549],[25000,629],[30000,709],[40000,879],[50000,969]],inc:['Predictive · Attribution']},
+   {n:'Enterprise',tiers:[[1000,145],[2500,255],[5000,375],[7500,479],[10000,589],[15000,689],[20000,785],[25000,879],[30000,949],[40000,1095],[50000,1169]],inc:['SSO · צוות חשבון ייעודי']}]},
+ ravmesser:{cur:'₪',model:'optionlookup',unit:'נמענים',billingLabel:' · בתשלום שנתי',note:'המחיר נקבע לפי מספר הנמענים וכמות המיילים החודשית; לפני מע״מ.',plans:[
+   {n:'רב מסר',tiers:[
+     {q:1000,options:[{emails:6000,price:95}]},
+     {q:2000,options:[{emails:2000,price:115},{emails:12000,price:130}]},
+     {q:3500,options:[{emails:3500,price:155},{emails:21000,price:175}]},
+     {q:5000,options:[{emails:5000,price:195},{emails:30000,price:230}]},
+     {q:7500,options:[{emails:7500,price:265},{emails:45000,price:330}]},
+     {q:10000,options:[{emails:10000,price:340},{emails:60000,price:370}]},
+     {q:20000,options:[{emails:20000,price:475},{emails:120000,price:545}]}
+   ],inc:['דפי נחיתה · אוטומציות','CRM (קשר) · קורסים (סקולר)']}]},
+ powerdoc:{cur:'₪',model:'static',bill:true,annualTotal:true,note:'בחירת חבילה קבועה; ללא מד כמות. לפני מע״מ.',plans:[
+   {n:'Power',q:200,p:{a:350,m:35},inc:['250 אנשי קשר · 10 תבניות · API']},
+   {n:'Power Plus',q:360,p:{a:564,m:57},inc:['450 אנשי קשר']},
+   {n:'Power Pro',q:840,p:{a:1068,m:99},inc:['1,000 אנשי קשר']},
+   {n:'Full Power',q:Infinity,p:null,inc:['נפחים גדולים — בהצעה']}]},
+ twosign:{cur:'₪',model:'static',bill:true,note:'בחירת חבילה קבועה; ללא מד כמות. לפני מע״מ.',plans:[
+   {n:'Starter',q:25,p:{a:35,m:39},inc:['תבנית 1 · 50 אנשי קשר']},
+   {n:'Pro',q:100,p:{a:71,m:79},inc:['20 תבניות · WhatsApp · API']},
+   {n:'Business',q:250,p:{a:158,m:175},inc:['30 תבניות · OTP · טפסים']},
+   {n:'Enterprise',q:Infinity,p:null,inc:['1,000+ · API ללא הגבלה']}]},
+ easydo:{cur:'₪',model:'static',bill:true,note:'מודול Sign; בחירת חבילה קבועה; ללא מד כמות. לפני מע״מ.',plans:[
+   {n:'Free',q:10,p:{a:0,m:0},inc:['250 אנשי קשר']},
+   {n:'Basic',q:20,p:{a:16,m:19},inc:['500 אנשי קשר · 2 תבניות']},
+   {n:'Pro',q:100,p:{a:48,m:59},inc:['2,000 אנשי קשר · 10 תבניות']},
+   {n:'Business',q:250,p:{a:122,m:149},inc:['אנשי קשר ללא הגבלה · 30 תבניות']}]},
+ fillout:{cur:'$',model:'static',bill:true,note:'בחירת חבילה קבועה; משתמשים ללא הגבלה.',plans:[
+   {n:'Free',q:1000,p:{a:0,m:0},inc:['טפסים ללא הגבלה · תשלומים']},
+   {n:'Starter',q:2000,p:{a:15,m:19},inc:['כל סוגי השאלות · טפסי התחברות']},
+   {n:'Pro',q:5000,p:{a:40,m:49},inc:['ללא מיתוג · קישורים ו-CSS מותאמים']},
+   {n:'Business',q:Infinity,p:{a:75,m:89},inc:['תגובות ללא הגבלה · אנליטיקה · דומיין מותאם']}]}
+};
+const STATIC_CALC={
+ heyy:{cur:'$',model:'static',bill:true,note:'קרדיטים ועמלות WhatsApp בנפרד.',plans:[
+   {n:'Hobby',p:{a:41,m:49},inc:['Workspace אחד · משתמש אחד']},{n:'Pro',p:{a:125,m:149},inc:['5 משתמשים · 2 עובדי AI']},{n:'Ultra',p:{a:416,m:499},inc:['10 משתמשים · 3 עובדי AI']},{n:'Enterprise',p:null,inc:['מחיר מותאם']}]},
+ wati:{cur:'$',model:'static',note:'המחיר משתנה לפי אזור; הודעות WhatsApp מחויבות בנפרד.',plans:[
+   {n:'Growth',p:null,inc:['3 משתמשים']},{n:'Pro',p:null,inc:['5 משתמשים']},{n:'Business',p:null,inc:['מחיר מותאם']}]},
+ activetrail:{cur:'₪',model:'lookup',bill:true,unit:'אנשי קשר',note:'מחיר לפי אנשי קשר; שנתי חוסך 15%. לפני מע״מ.',plans:[
+   {n:'Basic',tiers:[{q:500,a:50,m:59},{q:1000,a:100,m:118},{q:2500,a:169,m:199},{q:5000,a:254,m:299},{q:10000,a:390,m:459},{q:20000,a:594,m:699},{q:40000,a:764,m:899},{q:60000,a:934,m:1099}],inc:['משתמש אחד']},
+   {n:'Plus',tiers:[{q:500,a:60,m:71},{q:1000,a:120,m:142},{q:2500,a:203,m:239},{q:5000,a:305,m:359},{q:10000,a:468,m:551},{q:20000,a:713,m:839},{q:40000,a:917,m:1079},{q:60000,a:1121,m:1319}],inc:['עד 10 משתמשים']},
+   {n:'Premium',tiers:[{q:500,a:1079,m:1269},{q:1000,a:1153,m:1357},{q:2500,a:1303,m:1533},{q:5000,a:1475,m:1735},{q:10000,a:1690,m:1988},{q:20000,a:2003,m:2356},{q:40000,a:null,m:null},{q:60000,a:null,m:null}],inc:['שירות מנוהל']}]},
+ smoove:{cur:'₪',model:'lookup',bill:true,unit:'אנשי קשר',note:'מחיר לפי אנשי קשר; שנתי חוסך 10%. לפני מע״מ.',plans:[
+   {n:'Free',tiers:[{q:100,a:0,m:0},{q:500,a:null,m:null},{q:1000,a:null,m:null},{q:2500,a:null,m:null},{q:5000,a:null,m:null},{q:7500,a:null,m:null},{q:10000,a:null,m:null},{q:15000,a:null,m:null},{q:20000,a:null,m:null},{q:'20K+',a:null,m:null}],inc:['עד 100 אנשי קשר']},
+   {n:'Basic',tiers:[{q:100,a:63,m:69},{q:500,a:63,m:69},{q:1000,a:117,m:129},{q:2500,a:180,m:199},{q:5000,a:270,m:299},{q:7500,a:362,m:402},{q:10000,a:418,m:464},{q:15000,a:531,m:590},{q:20000,a:639,m:709},{q:'20K+',a:null,m:null}],inc:['SMS · WhatsApp בתוספת']},
+   {n:'Standard',tiers:[{q:100,a:67,m:74},{q:500,a:67,m:74},{q:1000,a:130,m:144},{q:2500,a:198,m:219},{q:5000,a:297,m:329},{q:7500,a:405,m:449},{q:10000,a:468,m:519},{q:15000,a:594,m:660},{q:20000,a:711,m:789},{q:'20K+',a:null,m:null}],inc:['5 משתמשים · כלי E-commerce']},
+   {n:'Pro',tiers:[{q:100,a:134,m:148},{q:500,a:134,m:148},{q:1000,a:260,m:288},{q:2500,a:395,m:438},{q:5000,a:593,m:658},{q:7500,a:809,m:898},{q:10000,a:917,m:1018},{q:15000,a:1170,m:1300},{q:20000,a:1421,m:1578},{q:'20K+',a:null,m:null}],inc:['10 משתמשים · תמיכה ייעודית']}]},
+};
+const HOME_CALC=Object.assign({},CALC,STATIC_CALC);
+const XT={
+ monday:{g:'מוצרים צמודים לכל משתמש: CRM $12–28 · dev $9–20 · service $31–45 · תוסף +25,000 קריאות API/יום (בהצעה)',p:{'Basic':'ללא אוטומציות · 1,000 AI','Standard':'מעל 250 פעולות/חודש → שדרוג ל-Pro','Pro':'מעל 25K פעולות → Enterprise','Enterprise':'250K פעולות/חודש'}},
+ fireberry:{g:'תוספים שאינם מתומחרים בעמוד המחירים אינם מוצגים',p:{'Professional':'50 אוטומציות','Enterprise':'500 אוטומציות · מבוססות זמן'}},
+ zoho:{g:'Zoho One (50+ אפליקציות) $37/עובד או $90/משתמש · קרדיטי API/אחסון נוספים · מיסים מקומיים'},
+ glassix:{g:'תוסף AI — בתשלום נוסף · עמלות WhatsApp של Meta בנפרד',p:{'Starter':'50K שיחות בוט','Growth':'100K שיחות בוט','Enterprise':'500K שיחות בוט'}},
+ voicenter:{g:'המחירון מציג מחיר חודשי למשתמש; פירוט שירותים מופיע בטבלת ההשוואה בעמוד הרשמי'},
+ greenapi:{g:'כל instance נוסף = מספר WhatsApp נוסף (×מחיר החבילה) · Partner לנפח גבוה $0.40/יום · ללא עמלות Meta'},
+ make:{g:'קרדיט נוסף +25% מעל מחיר החבילה · תעבורת נתונים 5GB/10K קרדיטים · שנתי חוסך 15%+',p:{'Core':'תקרה 300K קרדיטים/חודש','Pro':'תקרה 8M קרדיטים/חודש','Teams':'תקרה 8M קרדיטים/חודש'}},
+ n8n:{g:'אירוח Self-hosted על שרת Optimate: ₪500 לחודש לפני מע״מ. בתשתית הלקוח התמחור לפי חבילת n8n הנבחרת · הרצה = ריצת Workflow שלם (ללא תלות בצעדים)',p:{'Starter':'2,500 הרצות · 5 בו-זמנית','Pro':'10K–50K הרצות · 20 בו-זמנית','Business':'40K–500K הרצות · concurrency גבוה','Enterprise':'הרצות מותאם · 200+ בו-זמנית'}},
+ manychat:{g:'עמלות WhatsApp של Meta — בנפרד',p:{'Essential':'חריגה $0.10/איש קשר','Pro':'חריגה $0.05/איש קשר','Business':'חריגה $0.025/איש קשר','Advanced':'חריגה $0.004/איש קשר'}},
+ activecampaign:{g:'תוספים וחריגות שאינם מתומחרים בעמוד המחירים אינם מוצגים'},
+ ravmesser:{g:'מכסת המיילים נבחרת בנפרד ממספר הנמענים · SMS בחבילה נפרדת · מעל 20K נמענים — הצעה מיוחדת'},
+ powerdoc:{g:'חבילות קרדיטים: ₪75/300 · ₪100/500 · ₪350/2,000 · ₪750/5,000 · משתמש נוסף ₪319/שנה · +5 תבניות ₪60 · +200 אנשי קשר ₪70'},
+ twosign:{g:'משתמשי משנה נוספים לפי תוכנית · OTP/טפסים מ-Business',p:{'Starter':'תבנית 1 · 50 אנשי קשר','Pro':'20 תבניות · WhatsApp · API','Business':'30 תבניות','Enterprise':'תבניות ללא הגבלה'}},
+ easydo:{g:'מודול HR נפרד: Free ₪0 (20 עובדים) · Basic ₪60 · Pro ₪149 · Enterprise בהצעה · WhatsApp/SMS ערוץ מדיד'},
+ fillout:{g:'תגובות מעבר למכסה → שדרוג תוכנית · שערי פיצ׳רים (דומיין/אנליטיקס/White-label) לפי תוכנית · SSO/Audit ב-Enterprise'}
+};
+const XSTAT={
+ activetrail:['SMS ₪0.111/הודעה בנפח המוצג','WhatsApp — בהצעה','מיילים ללא הגבלה בכל התוכניות','מחיר לפי כמות אנשי קשר (סליידר באתר)'],
+ smoove:['מכסת SMS = ×3 / ×5 / ×7 מהרשימה (לפי תוכנית); מעבר לכך בתשלום','WhatsApp — תוסף בתשלום','מחיר לפי כמות אנשי קשר (100→20K+)'],
+ wati:['הודעות WhatsApp — לפי מדינה וסוג תבנית (מעל תעריפי Meta)','משתמש נוסף $24–69 (לפי תוכנית)','טריגרי אוטומציה מעבר למכסה','מחיר משתנה לפי אזור'],
+ heyy:['קרדיטים (AI + הודעות) — חריגה בתשלום','עמלות WhatsApp של Meta — בנפרד','משתמשים ועובדי AI לפי תוכנית'],
+};
+function money(cur,v){if(v==null)return 'בהצעה';var r=Math.round(v*100)/100;var s=(r%1===0)?r.toLocaleString('en-US'):r.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});return cur==='₪'?('₪'+s):cur==='€'?(s+'€'):('$'+s);}
+function node(html){var d=document.createElement('div');d.innerHTML=html.trim();return d.firstChild;}
+var openPanel=null,openTrigger=null,planInfoSequence=0,calculatorControlSequence=0;
+function closePlanDetail(options){
+ options=options||{};
+ if(!openPanel)return;
+ openPanel.hidden=true;
+ if(openTrigger)openTrigger.setAttribute('aria-expanded','false');
+ if(options.restoreFocus&&openTrigger)openTrigger.focus();
+ openPanel=null;openTrigger=null;
+}
+function readablePlanName(nameEl){
+ var copy=nameEl.cloneNode(true);copy.querySelectorAll('small').forEach(function(el){el.remove();});return copy.textContent.trim();
+}
+function positionPlanDetail(panel,trigger){
+ panel.style.top='';panel.style.bottom='';panel.style.maxHeight='';
+ if(!window.matchMedia('(max-width:600px)').matches)return;
+ var gap=8,rect=trigger.getBoundingClientRect(),below=window.innerHeight-rect.bottom-gap,above=rect.top-gap;
+ if(below>=above){panel.style.top=Math.round(rect.bottom+gap)+'px';panel.style.bottom='auto';panel.style.maxHeight=Math.max(120,Math.floor(below))+'px';}
+ else{panel.style.top='auto';panel.style.bottom=Math.round(window.innerHeight-rect.top+gap)+'px';panel.style.maxHeight=Math.max(120,Math.floor(above))+'px';}
+}
+function enhancePlanDetails(root){
+ if(!root||!window.PricingPlanDetails)return;
+ root.querySelectorAll('.sysblock').forEach(function(system){
+  var systemId=system.id,systemTitle=system.querySelector('.syshead h3');
+  system.querySelectorAll('.plans .plan').forEach(function(card){
+   var nameEl=card.querySelector('.pname');if(!nameEl)return;
+   var planName=readablePlanName(nameEl),detail=PricingPlanDetails.getPlanDetail(systemId,planName);if(!detail)return;
+   var sequence=++planInfoSequence;
+   var row=document.createElement('div');row.className='plan-name-row';nameEl.parentNode.insertBefore(row,nameEl);row.appendChild(nameEl);
+   var trigger=document.createElement('button');trigger.type='button';trigger.className='plan-info-trigger';trigger.id='plan-info-trigger-'+sequence;trigger.textContent='ⓘ';trigger.setAttribute('aria-label','פרטים על חבילת '+planName);trigger.setAttribute('aria-expanded','false');
+   var panel=document.createElement('div');panel.className='plan-info-panel';panel.id='plan-info-panel-'+sequence;panel.hidden=true;panel.setAttribute('role','dialog');panel.setAttribute('aria-label','פרטי '+(systemTitle?systemTitle.textContent.trim()+' ':'')+planName);trigger.setAttribute('aria-controls',panel.id);
+   var heading=document.createElement('h4');heading.textContent=(systemTitle?systemTitle.textContent.trim()+' · ':'')+planName;panel.appendChild(heading);
+   if(detail.intro){var intro=document.createElement('p');intro.className='plan-info-intro';intro.textContent=detail.intro;panel.appendChild(intro);}
+   var list=document.createElement('ul');detail.features.forEach(function(feature){var item=document.createElement('li');item.textContent=feature;list.appendChild(item);});panel.appendChild(list);
+   if(detail.caveat){var caveat=document.createElement('p');caveat.className='plan-info-caveat';caveat.textContent=detail.caveat;panel.appendChild(caveat);}
+   var meta=document.createElement('div');meta.className='plan-info-meta';var checked=document.createElement('span');checked.textContent='נבדק בתאריך '+detail.verifiedAt;var link=document.createElement('a');link.href=detail.sourceUrl;link.textContent='למקור הרשמי';link.target='_blank';link.rel='noopener noreferrer';meta.appendChild(checked);meta.appendChild(link);panel.appendChild(meta);
+   trigger.addEventListener('click',function(event){event.stopPropagation();if(openPanel===panel){closePlanDetail({restoreFocus:false});return;}if(openPanel&&openPanel!==panel)closePlanDetail({restoreFocus:false});panel.hidden=false;positionPlanDetail(panel,trigger);trigger.setAttribute('aria-expanded','true');openPanel=panel;openTrigger=trigger;});
+   panel.addEventListener('click',function(event){event.stopPropagation();});row.appendChild(trigger);card.appendChild(panel);
+  });
+ });
+}
+document.addEventListener('keydown',function(event){if(event.key==='Escape'&&openPanel)closePlanDetail({restoreFocus:true});});
+document.addEventListener('click',function(event){if(openPanel&&!openPanel.contains(event.target)&&event.target!==openTrigger){var interactive=event.target.closest&&event.target.closest('a,button,input,select,textarea,[tabindex]');closePlanDetail({restoreFocus:!interactive});}});
+window.addEventListener('resize',function(){if(openPanel&&openTrigger)positionPlanDetail(openPanel,openTrigger);});
+enhancePlanDetails(document.getElementById('pricing-view'));
+function num(v){return Number(v).toLocaleString('en-US');}
+function controlLabel(text,controlId){return '<label for="'+controlId+'">'+text+'</label>';}
+
+function buildCalculator(mount,id,cfg,onChange){
+ if(!mount||!cfg)return null;
+ onChange=typeof onChange==='function'?onChange:function(){};
+ var panel=node('<div class="calc"><h4><span class="tag">מחשבון</span> תמחור אינטראקטיבי</h4><div class="cbody"></div><div class="calcxtra" style="display:none"></div><div class="hint">'+(cfg.note||'')+'</div></div>');
+ var body=panel.querySelector('.cbody');
+ var xtraEl=panel.querySelector('.calcxtra');
+ var mode='a';
+ function price(p){return PricingCore.calculatePeriodPrice(p,mode);}
+ function bl(){return cfg.bill?(mode==='a'?' · שנתי':' · חודשי'):(cfg.billingLabel||'');}
+ function setX(pn){var x=XT[id];if(!x){xtraEl.style.display='none';return;}xtraEl.style.display='';var pp=(x.p&&x.p[pn])?x.p[pn]:'';xtraEl.innerHTML='<b>💠 משתנים נוספים:</b> '+[pp,x.g].filter(Boolean).join(' · ');}
+ var billHTML=cfg.bill?'<div class="billtog"><button class="on" data-m="a">שנתי</button><button data-m="m">חודשי</button></div>':'';
+ var chips=(cfg.plans.length>1)?('<div class="planchips">'+cfg.plans.map(function(p,i){return '<button data-i="'+i+'"'+(i===0?' class="on"':'')+'>'+p.n+'</button>';}).join('')+'</div>'):'';
+ var pi=0,doUpd=function(){},controlId='calc-control-'+id+'-'+(++calculatorControlSequence),currentState={plan:'',quantity:'1',controlValue:null,monthlyPrice:null,displayPrice:'בהצעה'};
+ function setCurrentState(plan,quantity,controlValue,monthlyPrice,bigEl){
+   currentState={plan:plan,quantity:String(quantity),controlValue:controlValue,monthlyPrice:monthlyPrice,displayPrice:bigEl?bigEl.textContent.trim():'בהצעה'};
+ }
+
+ if(cfg.model==='seat'){
+   var start=cfg.plans[0].min||cfg.min;
+   body.innerHTML=billHTML+chips+'<div class="ctrl">'+controlLabel(cfg.unit,controlId)+'<input id="'+controlId+'" type="range" class="rg" min="'+cfg.min+'" max="'+cfg.max+'" value="'+start+'"><input type="number" class="nm" aria-label="'+cfg.unit+' — ערך מספרי" min="'+cfg.min+'" max="'+cfg.max+'" value="'+start+'"></div><div class="result"><div class="big"></div><div class="inc"></div></div>';
+   var rg=body.querySelector('.rg'),nm=body.querySelector('.nm'),big=body.querySelector('.big'),inc=body.querySelector('.inc');
+   doUpd=function(){var p=cfg.plans[pi],mn=p.min||cfg.min,q=parseInt(nm.value||mn,10);if(isNaN(q))q=mn;if(q<mn)q=mn;if(q>cfg.max)q=cfg.max;rg.min=mn;nm.min=mn;rg.value=q;nm.value=q;var qb=q,bnote='';if(cfg.buckets){var bk=cfg.buckets.filter(function(b){return b>=q;});qb=bk.length?bk[0]:cfg.buckets[cfg.buckets.length-1];if(qb!==q)bnote=' · מחויב על '+qb+' מושבים';}var pr=PricingCore.calculateSeatUnitPrice(p,q,mode),monthly=(pr==null||(p.annualOnly&&mode==='m'))?null:pr*qb;if(pr==null){if(p.annualOnly&&mode==='m'){big.innerHTML='זמין בתשלום שנתי בלבד <small>· '+money(cfg.cur,p.p.a)+' למשתמש (שנתי)</small>';}else{big.innerHTML='בהצעה <small>· '+q+' '+cfg.unit+'</small>';}}else{big.innerHTML=money(cfg.cur,pr*qb)+' <small>/חודש · '+money(cfg.cur,pr)+'×'+qb+bl()+bnote+'</small>';}inc.innerHTML='<b>'+p.n+':</b> '+p.inc.join(' · ')+(mn>cfg.min?(' · מינ׳ '+mn+' משתמשים'):'');setX(p.n);setCurrentState(p.n,q+' '+cfg.unit,q,monthly,big);};
+   body.querySelectorAll('.planchips button').forEach(function(b){b.onclick=function(){pi=+b.dataset.i;body.querySelectorAll('.planchips button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');var mn=cfg.plans[pi].min||cfg.min;if(+nm.value<mn)nm.value=mn;doUpd();};});
+   rg.oninput=function(){nm.value=rg.value;doUpd();};nm.oninput=function(){doUpd();};
+ }
+ else if(cfg.model==='maketier'){
+   body.innerHTML=billHTML+chips+'<div class="ctrl">'+controlLabel(cfg.unit,controlId)+'<input id="'+controlId+'" type="range" class="rg" min="0" step="1" value="0"><span class="qtyval"></span></div><div class="result"><div class="big"></div><div class="inc"></div></div>';
+   var rgm=body.querySelector('.rg'),qvm=body.querySelector('.qtyval'),bigm=body.querySelector('.big'),incm=body.querySelector('.inc');
+   doUpd=function(){var p=cfg.plans[pi],maxi=p.a.length-1;rgm.max=maxi;if(+rgm.value>maxi)rgm.value=maxi;var idx=+rgm.value,cr=cfg.tiers[idx],av=p.a[idx],val=(mode==='a')?av:av/0.85;qvm.textContent=num(cr)+' קרדיטים · תקרה '+num(cfg.tiers[maxi]);bigm.innerHTML=money(cfg.cur,val)+' <small>/חודש'+bl()+'</small>';incm.innerHTML='<b>'+p.n+':</b> '+p.inc.join(' · ');setX(p.n);setCurrentState(p.n,num(cr)+' קרדיטים',idx,val,bigm);};
+   body.querySelectorAll('.planchips button').forEach(function(b){b.onclick=function(){pi=+b.dataset.i;body.querySelectorAll('.planchips button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');doUpd();};});
+   rgm.oninput=function(){doUpd();};
+ }
+ else if(cfg.model==='execplan'){
+   body.innerHTML=billHTML+chips+'<div class="ctrl">'+controlLabel(cfg.unit,controlId)+'<input id="'+controlId+'" type="range" class="rg" min="0" step="1" value="0"><span class="qtyval"></span></div><div class="result"><div class="big"></div><div class="inc"></div></div>';
+   var ctrlE=body.querySelector('.ctrl'),rgE=body.querySelector('.rg'),qvE=body.querySelector('.qtyval'),bigE=body.querySelector('.big'),incE=body.querySelector('.inc');
+   doUpd=function(){var p=cfg.plans[pi];
+     if(!p.execs){ctrlE.style.display='none';bigE.innerHTML='בהצעה <small>· מספר הרצות מותאם</small>';incE.innerHTML='<b>'+p.n+':</b> '+p.inc.join(' · ');setX(p.n);setCurrentState(p.n,'מספר הרצות מותאם',0,null,bigE);return;}
+     if(p.execs.length<=1){ctrlE.style.display='none';var r0=p.execs[0],fixedVal=(mode==='a')?r0[1]:r0[1]*cfg.ratioM;bigE.innerHTML=money(cfg.cur,fixedVal)+' <small>/חודש'+bl()+' · '+num(r0[0])+' הרצות (קבוע)</small>';incE.innerHTML='<b>'+p.n+':</b> '+p.inc.join(' · ');setX(p.n);setCurrentState(p.n,num(r0[0])+' הרצות',0,fixedVal,bigE);return;}
+     ctrlE.style.display='';var maxi=p.execs.length-1;rgE.max=maxi;if(+rgE.value>maxi)rgE.value=maxi;
+     var row=p.execs[+rgE.value],cr=row[0],av=row[1];
+     if(av==null){qvE.textContent='מספר הרצות מותאם';bigE.innerHTML='בהצעה <small>'+bl()+'</small>';}
+     else{var val=(mode==='a')?av:av*cfg.ratioM;qvE.textContent=num(cr)+' הרצות/חודש';bigE.innerHTML=money(cfg.cur,val)+' <small>/חודש'+bl()+'</small>';}
+     incE.innerHTML='<b>'+p.n+':</b> '+p.inc.join(' · ');setX(p.n);setCurrentState(p.n,av==null?'מספר הרצות מותאם':num(cr)+' הרצות',+rgE.value,av==null?null:val,bigE);};
+   body.querySelectorAll('.planchips button').forEach(function(b){b.onclick=function(){pi=+b.dataset.i;body.querySelectorAll('.planchips button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');rgE.value=0;doUpd();};});
+   rgE.oninput=function(){doUpd();};
+ }
+ else if(cfg.model==='lookup'){
+   var tq=cfg.plans[0].tiers.map(function(t){return Array.isArray(t)?t[0]:t.q;});
+   body.innerHTML=billHTML+chips+'<div class="ctrl">'+controlLabel(cfg.unit,controlId)+'<input id="'+controlId+'" type="range" class="rg" min="0" max="'+(tq.length-1)+'" step="1" value="0"><span class="qtyval"></span></div><div class="result"><div class="big"></div><div class="inc"></div></div>';
+   var rg3=body.querySelector('.rg'),qv=body.querySelector('.qtyval'),big3=body.querySelector('.big'),inc3=body.querySelector('.inc');
+   doUpd=function(){var p=cfg.plans[pi],ti=+rg3.value,lookup=PricingCore.calculateLookupPrice(p,ti,mode),qty=lookup.quantity,qtyText=typeof qty==='number'?num(qty):String(qty),pr=lookup.price;qv.textContent=qtyText+' '+cfg.unit;big3.innerHTML=pr==null?'בהצעה <small>'+bl()+'</small>':money(cfg.cur,pr)+' <small>/חודש'+bl()+'</small>';inc3.innerHTML='<b>'+p.n+':</b> '+p.inc.join(' · ');setX(p.n);setCurrentState(p.n,qtyText+' '+cfg.unit,ti,pr,big3);};
+   body.querySelectorAll('.planchips button').forEach(function(b){b.onclick=function(){pi=+b.dataset.i;body.querySelectorAll('.planchips button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');doUpd();};});
+   rg3.oninput=function(){doUpd();};
+ }
+ else if(cfg.model==='optionlookup'){
+   var optionPlan=cfg.plans[0],optionIndex=0;
+   body.innerHTML='<div class="ctrl">'+controlLabel(cfg.unit,controlId)+'<input id="'+controlId+'" type="range" class="rg dual-tier" min="0" max="'+(optionPlan.tiers.length-1)+'" step="1" value="0"><span class="qtyval"></span></div><div class="mail-selector"><div class="mail-label">כמות המיילים החודשית שלי</div><div class="mailchips" role="radiogroup" aria-label="כמות המיילים החודשית"></div></div><div class="result"><div class="big"></div><div class="inc"></div></div>';
+   var rgOpt=body.querySelector('.rg'),qvOpt=body.querySelector('.qtyval'),mailchips=body.querySelector('.mailchips'),bigOpt=body.querySelector('.big'),incOpt=body.querySelector('.inc');
+   doUpd=function(){
+     var tierIndex=+rgOpt.value,tier=optionPlan.tiers[tierIndex],options=tier.options||[];
+     if(optionIndex>=options.length)optionIndex=0;
+     var lookup=PricingCore.calculateOptionLookupPrice(optionPlan,tierIndex,optionIndex),qtyText=num(lookup.quantity),emailText=num(lookup.emails);
+     qvOpt.textContent=qtyText+' '+cfg.unit;
+     mailchips.innerHTML=options.map(function(option,index){return '<button type="button" role="radio" aria-checked="'+(index===optionIndex?'true':'false')+'" data-option-index="'+index+'"'+(index===optionIndex?' class="on"':'')+'>'+num(option.emails)+' מיילים</button>';}).join('');
+     mailchips.querySelectorAll('button').forEach(function(button){button.onclick=function(){optionIndex=+button.dataset.optionIndex;doUpd();};});
+     bigOpt.innerHTML=lookup.price==null?'בהצעה <small>'+bl()+'</small>':money(cfg.cur,lookup.price)+' <small>/חודש'+bl()+'</small>';
+     incOpt.innerHTML='<b>'+optionPlan.n+':</b> '+optionPlan.inc.join(' · ');
+     setX(optionPlan.n);setCurrentState(optionPlan.n,qtyText+' נמענים · '+emailText+' מיילים/חודש',tierIndex+':'+optionIndex,lookup.price,bigOpt);
+   };
+   rgOpt.oninput=function(){optionIndex=0;doUpd();};
+ }
+ else if(cfg.model==='ladder'){
+   var p0=cfg.plans[0],ti0=p0.tiers;
+   body.innerHTML='<div class="ctrl">'+controlLabel(cfg.unit,controlId)+'<input id="'+controlId+'" type="range" class="rg" min="0" max="'+(ti0.length-1)+'" step="1" value="0"><span class="qtyval"></span></div><div class="result"><div class="big"></div><div class="inc"></div></div>';
+   var rg4=body.querySelector('.rg'),qv4=body.querySelector('.qtyval'),big4=body.querySelector('.big'),inc4=body.querySelector('.inc');
+   doUpd=function(){var idx=+rg4.value,t=ti0[idx];qv4.textContent=num(t[0])+' '+cfg.unit;big4.innerHTML=money(cfg.cur,t[1])+' <small>/חודש</small>';inc4.innerHTML=p0.inc.join(' · ');setX(p0.n);setCurrentState(p0.n,num(t[0])+' '+cfg.unit,idx,t[1],big4);};
+   rg4.oninput=function(){doUpd();};
+ }
+ else if(cfg.model==='volume'){
+   var fin=cfg.plans.filter(function(p){return isFinite(p.q);}),maxQ=fin.length?fin[fin.length-1].q:100,st=fin.length?Math.min(fin[0].q,maxQ):1;
+   body.innerHTML=billHTML+chips+'<div class="ctrl">'+controlLabel(cfg.unit,controlId)+'<input id="'+controlId+'" type="range" class="rg" min="1" max="'+maxQ+'" value="'+st+'"><input type="number" class="nm" aria-label="'+cfg.unit+' — ערך מספרי" min="1" value="'+st+'"></div><div class="result"><div class="big"></div><div class="inc"></div></div>';
+   var rg5=body.querySelector('.rg'),nm5=body.querySelector('.nm'),big5=body.querySelector('.big'),inc5=body.querySelector('.inc');
+   doUpd=function(){var v=parseInt(nm5.value||1,10);if(isNaN(v))v=1;if(v<1)v=1;nm5.value=v;rg5.value=Math.min(v,maxQ);var capacity=PricingCore.evaluatePlanCapacity(cfg.plans,pi,v),p=capacity.selected,pr=price(p),warning=capacity.overLimit?' · חורג ממכסת '+num(p.q)+'; מומלץ '+capacity.recommended.n:'';big5.innerHTML=(pr==null?'בהצעה':money(cfg.cur,pr)+' <small>/חודש'+bl()+'</small>')+(warning?'<small>'+warning+'</small>':'');inc5.innerHTML='<b>'+p.n+':</b> '+p.inc.join(' · ');setX(p.n);setCurrentState(p.n,num(v)+' '+cfg.unit,v,pr,big5);};
+   body.querySelectorAll('.planchips button').forEach(function(b){b.onclick=function(){pi=+b.dataset.i;body.querySelectorAll('.planchips button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');doUpd();};});
+   rg5.oninput=function(){nm5.value=rg5.value;doUpd();};nm5.oninput=function(){doUpd();};
+ }
+
+ else if(cfg.model==='seatpick'){
+   var bkOpts=cfg.buckets.map(function(b){return '<option value="'+b+'"'+(b===cfg.def?' selected':'')+'>'+(b>=200?'200+ מושבים':b+' מושבים')+'</option>';}).join('');
+   body.innerHTML=billHTML+chips+'<div class="ctrl">'+controlLabel(cfg.unit,controlId)+'<select id="'+controlId+'" class="selbk">'+bkOpts+'</select></div><div class="result"><div class="big"></div><div class="inc"></div></div>';
+   var sb=body.querySelector('.selbk'),bigp=body.querySelector('.big'),incp=body.querySelector('.inc');
+   doUpd=function(){var p=cfg.plans[pi],seats=parseInt(sb.value,10);
+     var row=cfg.table[seats];
+     var tot=(row && pi<3)?row[mode==='a'?'a':'m'][pi]:null; // pi 0/1/2 = Basic/Standard/Pro; pi3=Enterprise
+     if(tot==null){var lbl=seats>=200?'200+ מושבים':(seats+' מושבים');bigp.innerHTML='בהצעה <small>· '+lbl+(pi===3?' · Enterprise':' · מחיר מותאם')+'</small>';}
+     else{var per=Math.round(tot/seats*100)/100;bigp.innerHTML=money(cfg.cur,tot)+' <small>/חודש · '+seats+' מושבים · '+money(cfg.cur,per)+' למושב'+bl()+'</small>';}
+     incp.innerHTML='<b>'+p.n+':</b> '+p.inc.join(' · ');setX(p.n);setCurrentState(p.n,(seats>=200?'200+':seats)+' מושבים',seats,tot,bigp);};
+   body.querySelectorAll('.planchips button').forEach(function(b){b.onclick=function(){pi=+b.dataset.i;body.querySelectorAll('.planchips button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');doUpd();};});
+   sb.onchange=function(){doUpd();};
+ }
+
+ else if(cfg.model==='static'){
+   body.innerHTML=billHTML+chips+'<div class="result"><div class="big"></div><div class="inc"></div></div>';
+   var bigS=body.querySelector('.big'),incS=body.querySelector('.inc');
+   doUpd=function(){var p=cfg.plans[pi],pr=price(p),displayPeriod=cfg.annualTotal&&mode==='a'?' /שנה · שנתי':' /חודש'+bl(),monthlyPrice=cfg.annualTotal&&mode==='a'&&pr!=null?pr/12:pr;bigS.innerHTML=(pr==null?'בהצעה':money(cfg.cur,pr)+' <small>'+displayPeriod+'</small>');incS.innerHTML='<b>'+p.n+':</b> '+p.inc.join(' · ');setCurrentState(p.n,'1',pi,monthlyPrice,bigS);};
+   body.querySelectorAll('.planchips button').forEach(function(b){b.onclick=function(){pi=+b.dataset.i;body.querySelectorAll('.planchips button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');doUpd();};});
+ }
+
+ body.querySelectorAll('.billtog button').forEach(function(b){b.onclick=function(){mode=b.dataset.m;body.querySelectorAll('.billtog button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');doUpd();};});
+ var renderUpdate=doUpd;
+ doUpd=function(){
+   renderUpdate();
+   onChange({id:id,plan:currentState.plan,quantity:currentState.quantity,controlValue:currentState.controlValue,billing:mode,currency:cfg.cur,monthlyPrice:currentState.monthlyPrice,displayPrice:currentState.displayPrice});
+ };
+ doUpd();
+ mount.appendChild(panel);
+ return panel;
+}
+function buildFullCalculator(id,cfg){var block=document.getElementById(id);if(!block)return;var plansDiv=block.querySelector('.plans');if(!plansDiv)return;var holder=document.createElement('div');var panel=buildCalculator(holder,id,cfg);if(panel)plansDiv.insertAdjacentElement('afterend',panel);}
+Object.keys(HOME_CALC).forEach(function(id){try{buildFullCalculator(id,HOME_CALC[id]);}catch(e){}});
+const SYSTEM_ORDER=['monday','fireberry','n8n','make','zoho','glassix','manychat','heyy','wati','greenapi','activecampaign','activetrail','smoove','ravmesser','cardcom','powerdoc','twosign','easydo','fillout','priority','voicenter'];
+const HOME_KEY='optimate-pricing-home-v1';
+function defaultHomeState(){return{selected:{},version:1};}
+function loadHomeState(){try{return PricingCore.sanitizeHomeState(JSON.parse(localStorage.getItem(HOME_KEY)),SYSTEM_ORDER);}catch(e){return defaultHomeState();}}
+function saveHomeState(){try{localStorage.setItem(HOME_KEY,JSON.stringify(homeState));}catch(e){}}
+var homeState=loadHomeState();
+function systemLabel(id){var el=document.querySelector('#'+id+' .syshead h3');return el?el.textContent.trim():id;}
+function renderSummary(){
+ var selections=Object.keys(homeState.selected).map(function(id){return homeState.selected[id];});
+ var summary=PricingCore.calculateTotals(selections),totals=summary.totals;
+ document.getElementById('total-ils').textContent=money('₪',totals['₪']);
+ document.getElementById('total-usd').textContent=money('$',totals['$']);
+ document.getElementById('total-eur').textContent=money('€',totals['€']);
+ var lines=document.getElementById('summary-lines');lines.innerHTML='';
+ if(!selections.length){lines.innerHTML='<p class="home-empty-note">עדיין לא נבחרו מערכות.</p>';}
+ selections.forEach(function(item){
+   var line=node('<div class="summary-line"><div class="summary-line-info"><b></b><span></span></div><div class="summary-line-price"></div></div>');
+   line.querySelector('b').textContent=systemLabel(item.id)+' · '+item.plan;
+   line.querySelector('span').textContent=item.quantity&&item.quantity!=='1'?' · '+item.quantity:'';
+   line.querySelector('.summary-line-price').textContent=item.monthlyPrice==null?'בהצעה':money(item.currency,item.monthlyPrice)+' /חודש';
+   lines.appendChild(line);
+ });
+ var quoteBox=document.getElementById('quote-summary'),quoteLines=document.getElementById('quote-lines');
+ quoteBox.hidden=!summary.quoted.length;quoteLines.textContent=summary.quoted.map(systemLabel).join(' · ');
+}
+document.addEventListener('homepricechange',function(event){
+ var detail=event.detail;if(!detail||!detail.id)return;
+ if(detail.selected===false)delete homeState.selected[detail.id];else homeState.selected[detail.id]=detail;
+ saveHomeState();renderSummary();
+});
+function emitHomeChange(detail){document.dispatchEvent(new CustomEvent('homepricechange',{detail:detail}));}
+function renderHomeSystems(){
+ var list=document.getElementById('home-system-list');if(!list)return;
+ SYSTEM_ORDER.forEach(function(id){
+   var source=document.getElementById(id),cfg=HOME_CALC[id];if(!source||!cfg)return;
+   var title=source.querySelector('.syshead h3'),cat=source.querySelector('.syshead .cat');
+   var row=node('<article class="home-system-row" data-system-id="'+id+'"><label class="home-system-choice"><input type="checkbox" aria-controls="home-calc-'+id+'"><span><strong class="home-system-name"></strong><small class="home-system-cat"></small></span></label><div class="home-system-calculator" id="home-calc-'+id+'" hidden></div></article>');
+   row.querySelector('.home-system-name').textContent=title?title.textContent:id;
+   row.querySelector('.home-system-cat').textContent=cat?cat.textContent:'';
+   var checkbox=row.querySelector('input'),mount=row.querySelector('.home-system-calculator');
+   checkbox.addEventListener('change',function(){
+     row.classList.toggle('selected',checkbox.checked);mount.hidden=!checkbox.checked;
+     if(!checkbox.checked){emitHomeChange({id:id,selected:false});return;}
+     if(!mount.firstChild){buildCalculator(mount,id,cfg,function(state){state.selected=true;row._priceState=state;emitHomeChange(state);});}
+     else if(row._priceState){emitHomeChange(row._priceState);}
+   });
+   list.appendChild(row);
+ });
+}
+renderHomeSystems();
+function restoreHomeSelections(){
+ Object.keys(homeState.selected).forEach(function(id){
+   var saved=Object.assign({},homeState.selected[id]);
+   var row=document.querySelector('.home-system-row[data-system-id="'+id+'"]');if(!row)return;
+   var checkbox=row.querySelector('input[type="checkbox"]');checkbox.checked=true;checkbox.dispatchEvent(new Event('change'));
+   var mount=row.querySelector('.home-system-calculator');
+   mount.querySelectorAll('.planchips button').forEach(function(button){if(button.textContent.trim()===saved.plan)button.click();});
+   var billing=mount.querySelector('.billtog button[data-m="'+saved.billing+'"]');if(billing)billing.click();
+   var dualTier=mount.querySelector('.dual-tier');
+   if(dualTier&&saved.controlValue!=null){var dualParts=String(saved.controlValue).split(':');dualTier.value=dualParts[0];dualTier.dispatchEvent(new Event('input'));var optionButton=mount.querySelector('.mailchips button[data-option-index="'+(dualParts[1]||0)+'"]');if(optionButton)optionButton.click();return;}
+   var control=mount.querySelector('.nm')||mount.querySelector('.selbk')||mount.querySelector('.rg');
+   if(control&&saved.controlValue!=null){control.value=saved.controlValue;control.dispatchEvent(new Event(control.tagName==='SELECT'?'change':'input'));}
+ });
+ renderSummary();
+}
+restoreHomeSelections();
+Object.keys(XSTAT).forEach(function(id){try{var blk=document.getElementById(id);if(!blk)return;var f=blk.querySelector('.factors');if(!f)return;var box=node('<div class="xstat"><h4>◆ משתנים נוספים ותמחור תוספות</h4><ul>'+XSTAT[id].map(function(s){return '<li>'+s+'</li>';}).join('')+'</ul></div>');f.insertAdjacentElement('afterend',box);}catch(e){}});
+routeFromHash();
+})();
+</script>
+</body>
+</html>
