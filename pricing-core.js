@@ -16,6 +16,43 @@
     return { totals, quoted };
   }
 
+  function normalizeExchangeRates(usdResponse, eurResponse) {
+    const validUsd = usdResponse
+      && usdResponse.base === 'USD'
+      && usdResponse.quote === 'ILS'
+      && Number.isFinite(usdResponse.rate)
+      && usdResponse.rate > 0
+      && typeof usdResponse.date === 'string'
+      && usdResponse.date;
+    const validEur = eurResponse
+      && eurResponse.base === 'EUR'
+      && eurResponse.quote === 'ILS'
+      && Number.isFinite(eurResponse.rate)
+      && eurResponse.rate > 0
+      && typeof eurResponse.date === 'string'
+      && eurResponse.date;
+    if (!validUsd || !validEur) return null;
+    return {
+      usdIls: usdResponse.rate,
+      eurIls: eurResponse.rate,
+      date: usdResponse.date === eurResponse.date
+        ? usdResponse.date
+        : `${usdResponse.date} / ${eurResponse.date}`,
+    };
+  }
+
+  function calculateTotalInIls(totals, rates) {
+    if (!totals) return null;
+    const ils = Number.isFinite(totals['₪']) ? totals['₪'] : 0;
+    const usd = Number.isFinite(totals.$) ? totals.$ : 0;
+    const eur = Number.isFinite(totals['€']) ? totals['€'] : 0;
+    if (usd === 0 && eur === 0) return Math.round(ils * 100) / 100;
+    if (!rates
+      || !Number.isFinite(rates.usdIls) || rates.usdIls <= 0
+      || !Number.isFinite(rates.eurIls) || rates.eurIls <= 0) return null;
+    return Math.round((ils + (usd * rates.usdIls) + (eur * rates.eurIls)) * 100) / 100;
+  }
+
   function calculatePeriodPrice(plan, billing) {
     if (!plan || !Object.prototype.hasOwnProperty.call(plan, 'p')) return null;
     const value = plan.p;
@@ -109,8 +146,10 @@
     calculateOptionLookupPrice,
     calculatePeriodPrice,
     calculateSeatUnitPrice,
+    calculateTotalInIls,
     calculateTotals,
     evaluatePlanCapacity,
+    normalizeExchangeRates,
     sanitizeHomeState,
   };
 });

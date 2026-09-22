@@ -65,6 +65,7 @@ body{background:var(--bg);color:var(--text);font-family:'Heebo',-apple-system,Bl
 .currency-total{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:14px;text-align:center}
 .currency-total span{display:block;font-size:12px;color:var(--muted);margin-bottom:2px}
 .currency-total strong{font-size:25px;font-weight:900;color:var(--text)}
+.fx-status{display:block;margin-top:7px;font-size:11.5px;line-height:1.5;color:var(--muted)}
 .summary-lines{display:grid;gap:7px}
 .summary-line{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:9px 11px;border-top:1px solid var(--border);font-size:13px}
 .summary-line-info{color:var(--muted)}
@@ -235,7 +236,7 @@ footer p b{color:var(--muted)}
     <div class="wrap">
       <span class="kicker">OPTIMATE · מחשבון מערכות</span>
       <h1>בחירת מערכות <span class="grad">וסיכום עלויות</span></h1>
-      <p class="sub">בחרו מערכות מהרשימה, הגדירו חבילה וכמות, וקבלו סיכום חודשי לפי מטבע.</p>
+      <p class="sub">בחרו מערכות מהרשימה, הגדירו חבילה וכמות, וקבלו סיכום חודשי אחד בשקלים.</p>
     </div>
   </section>
   <section class="home-picker">
@@ -248,11 +249,9 @@ footer p b{color:var(--muted)}
         <div class="home-system-list" id="home-system-list" aria-live="polite"></div>
         <section class="home-summary" id="home-summary" aria-live="polite">
           <h2>סה״כ חודשי</h2>
-          <p class="home-summary-sub">הסכומים מוצגים בנפרד לפי מטבע. מחירים בשקלים אינם כוללים מע״מ.</p>
+          <p class="home-summary-sub">הסכום מומר לשקלים לפי שערי ייחוס יומיים. מחירים בשקלים אינם כוללים מע״מ.</p>
           <div class="currency-totals">
-            <div class="currency-total"><span>שקלים</span><strong id="total-ils">₪0</strong></div>
-            <div class="currency-total"><span>דולרים</span><strong id="total-usd">$0</strong></div>
-            <div class="currency-total"><span>אירו</span><strong id="total-eur">0€</strong></div>
+            <div class="currency-total"><span>סה״כ בשקלים</span><strong id="total-ils">₪0</strong><small class="fx-status" id="fx-status">טוען שערי המרה…</small></div>
           </div>
           <div class="summary-lines" id="summary-lines"><p class="home-empty-note">עדיין לא נבחרו מערכות.</p></div>
           <div class="quote-summary" id="quote-summary" hidden><h3>דורש הצעת מחיר</h3><p id="quote-lines"></p></div>
@@ -1166,17 +1165,31 @@ function buildFullCalculator(id,cfg){var block=document.getElementById(id);if(!b
 Object.keys(HOME_CALC).forEach(function(id){try{buildFullCalculator(id,HOME_CALC[id]);}catch(e){}});
 const SYSTEM_ORDER=['monday','fireberry','n8n','make','zoho','glassix','manychat','heyy','wati','greenapi','activecampaign','activetrail','smoove','ravmesser','cardcom','powerdoc','twosign','easydo','fillout','priority','voicenter'];
 const HOME_KEY='optimate-pricing-home-v1';
+const FX_CACHE_KEY='optimate-pricing-fx-v1';
+var exchangeRates=null,exchangeRatesSource='loading';
 function defaultHomeState(){return{selected:{},version:1};}
 function loadHomeState(){try{return PricingCore.sanitizeHomeState(JSON.parse(localStorage.getItem(HOME_KEY)),SYSTEM_ORDER);}catch(e){return defaultHomeState();}}
 function saveHomeState(){try{localStorage.setItem(HOME_KEY,JSON.stringify(homeState));}catch(e){}}
+function validStoredRates(value){return value&&Number.isFinite(value.usdIls)&&value.usdIls>0&&Number.isFinite(value.eurIls)&&value.eurIls>0&&typeof value.date==='string'&&value.date;}
+function loadStoredRates(){try{var value=JSON.parse(localStorage.getItem(FX_CACHE_KEY));return validStoredRates(value)?value:null;}catch(e){return null;}}
+function saveExchangeRates(value){try{localStorage.setItem(FX_CACHE_KEY,JSON.stringify(value));}catch(e){}}
+function formatRate(value){return Number(value).toLocaleString('he-IL',{minimumFractionDigits:2,maximumFractionDigits:4});}
+function formatRateDate(value){if(!/^\d{4}-\d{2}-\d{2}$/.test(value))return value;var parts=value.split('-');return parts[2]+'.'+parts[1]+'.'+parts[0];}
 var homeState=loadHomeState();
 function systemLabel(id){var el=document.querySelector('#'+id+' .syshead h3');return el?el.textContent.trim():id;}
+function renderExchangeTotal(totals){
+ var total=PricingCore.calculateTotalInIls(totals,exchangeRates),totalEl=document.getElementById('total-ils'),status=document.getElementById('fx-status');
+ totalEl.textContent=total==null?'—':money('₪',total);
+ if(exchangeRates){
+   var source=exchangeRatesSource==='live'?'שערי ייחוס יומיים':'שער אחרון שנשמר';
+   status.textContent=source+' · $1 = ₪'+formatRate(exchangeRates.usdIls)+' · €1 = ₪'+formatRate(exchangeRates.eurIls)+' · עודכן '+formatRateDate(exchangeRates.date);
+ }else if(exchangeRatesSource==='error')status.textContent='לא ניתן לטעון שערי המרה כרגע. סכומים במטבע זר לא נכללו.';
+ else status.textContent='טוען שערי המרה…';
+}
 function renderSummary(){
  var selections=Object.keys(homeState.selected).map(function(id){return homeState.selected[id];});
  var summary=PricingCore.calculateTotals(selections),totals=summary.totals;
- document.getElementById('total-ils').textContent=money('₪',totals['₪']);
- document.getElementById('total-usd').textContent=money('$',totals['$']);
- document.getElementById('total-eur').textContent=money('€',totals['€']);
+ renderExchangeTotal(totals);
  var lines=document.getElementById('summary-lines');lines.innerHTML='';
  if(!selections.length){lines.innerHTML='<p class="home-empty-note">עדיין לא נבחרו מערכות.</p>';}
  selections.forEach(function(item){
@@ -1188,6 +1201,23 @@ function renderSummary(){
  });
  var quoteBox=document.getElementById('quote-summary'),quoteLines=document.getElementById('quote-lines');
  quoteBox.hidden=!summary.quoted.length;quoteLines.textContent=summary.quoted.map(systemLabel).join(' · ');
+}
+async function loadExchangeRates(){
+ var cached=loadStoredRates();
+ if(cached){exchangeRates=cached;exchangeRatesSource='cache';renderSummary();}
+ var controller=typeof AbortController==='function'?new AbortController():null,timeout=controller?setTimeout(function(){controller.abort();},8000):null;
+ try{
+   var responses=await Promise.all([
+     fetch('https://api.frankfurter.dev/v2/rate/usd/ils',{cache:'no-store',signal:controller?controller.signal:undefined}),
+     fetch('https://api.frankfurter.dev/v2/rate/eur/ils',{cache:'no-store',signal:controller?controller.signal:undefined})
+   ]);
+   if(!responses[0].ok||!responses[1].ok)throw new Error('exchange-rate request failed');
+   var payloads=await Promise.all([responses[0].json(),responses[1].json()]);
+   var live=PricingCore.normalizeExchangeRates(payloads[0],payloads[1]);
+   if(!live)throw new Error('invalid exchange-rate response');
+   exchangeRates=live;exchangeRatesSource='live';saveExchangeRates(live);
+ }catch(e){if(!exchangeRates)exchangeRatesSource='error';}
+ finally{if(timeout)clearTimeout(timeout);renderSummary();}
 }
 document.addEventListener('homepricechange',function(event){
  var detail=event.detail;if(!detail||!detail.id)return;
@@ -1230,6 +1260,7 @@ function restoreHomeSelections(){
  renderSummary();
 }
 restoreHomeSelections();
+loadExchangeRates();
 Object.keys(XSTAT).forEach(function(id){try{var blk=document.getElementById(id);if(!blk)return;var f=blk.querySelector('.factors');if(!f)return;var box=node('<div class="xstat"><h4>◆ משתנים נוספים ותמחור תוספות</h4><ul>'+XSTAT[id].map(function(s){return '<li>'+s+'</li>';}).join('')+'</ul></div>');f.insertAdjacentElement('afterend',box);}catch(e){}});
 routeFromHash();
 })();
