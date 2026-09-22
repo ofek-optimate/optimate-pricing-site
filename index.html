@@ -1205,7 +1205,7 @@ function renderSummary(){
 async function loadExchangeRates(){
  var cached=loadStoredRates();
  if(cached){exchangeRates=cached;exchangeRatesSource='cache';renderSummary();}
- var controller=typeof AbortController==='function'?new AbortController():null,timeout=controller?setTimeout(function(){controller.abort();},8000):null;
+ var controller=typeof AbortController==='function'?new AbortController():null,timeout=controller?setTimeout(function(){controller.abort();},15000):null;
  try{
    var responses=await Promise.all([
      fetch('https://api.frankfurter.dev/v2/rate/usd/ils',{cache:'no-store',signal:controller?controller.signal:undefined}),
